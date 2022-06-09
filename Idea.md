@@ -37,7 +37,7 @@ There are a lot of commands this tool supports:
 | ⧉ copy:1:5:2:14 | copy the specified line and column |
 | ⧉ cut:3:4:6:13 | cut the specified line and column |
 | ⧉ paste:6:5:7:20 | paste the specified line and column |
-| ⧉ call: ./../FILE.vsplay | calling the other file to make a chain, should have only one 'call' in the last line |
+| ⧉ call: ./../FILE.vscplay | calling the other file to make a chain, should have only one 'call' in the last line |
 | ⧉ wait:10:false | waiting for N seconds, if true shows countdown in the vscode as a tiny dialog |
 
 The structure of a command is like
@@ -50,8 +50,8 @@ The structure of a command is like
 
 A `Command` always should use in a separate line so you cannot mix them with the other texts.
 
-* `.vsplay` is the extension.
-* `config.vsplay.js` is the file you can add your custom commands & options globaly.
+* `.vscplay` is the extension.
+* `config.vscplay.js` is the file you can add your custom commands & options globaly.
 
 `front-matter` for configs per file
 
@@ -68,7 +68,7 @@ start-fresh:true // clear the file's content if it is true, just modify the curr
 ...
 ```
 
-`config.vsplay.js`
+`config.vscplay.js`
 
 ```
 {
@@ -88,32 +88,32 @@ start-fresh:true // clear the file's content if it is true, just modify the curr
 
 * Saving cursor posion in pause or deactiving the windows, ask for continue.
 * adding snippet for all commands & chars
-    * vsplay-down
-    * vsplay-down-more
-    * vsplay-up    
-    * vsplay-up-more
-    * vsplay-first
-    * vsplay-last
-    * vsplay-right
-    * vsplay-right-more
-    * vsplay-left
-    * vsplay-left-more
-    * vsplay-start
-    * vsplay-end
-    * vsplay-backspace
-    * vsplay-backspace-more
-    * vsplay-pause
-    * vsplay-command
-    * vsplay-goto
-    * vsplay-delete-line
-    * vsplay-delete-after
-    * vsplay-delete-before
-    * vsplay-shortcut
-    * vsplay-duplicate-after
-    * vsplay-duplicate-before
-    * vsplay-copy
-    * vsplay-cut
-    * vsplay-paste
-    * vsplay-call
-    * vsplay-wait
-    * vsplay-config
+    * vscplay-down
+    * vscplay-down-more
+    * vscplay-up    
+    * vscplay-up-more
+    * vscplay-first
+    * vscplay-last
+    * vscplay-right
+    * vscplay-right-more
+    * vscplay-left
+    * vscplay-left-more
+    * vscplay-start
+    * vscplay-end
+    * vscplay-backspace
+    * vscplay-backspace-more
+    * vscplay-pause
+    * vscplay-command
+    * vscplay-goto
+    * vscplay-delete-line
+    * vscplay-delete-after
+    * vscplay-delete-before
+    * vscplay-shortcut
+    * vscplay-duplicate-after
+    * vscplay-duplicate-before
+    * vscplay-copy
+    * vscplay-cut
+    * vscplay-paste
+    * vscplay-call
+    * vscplay-wait
+    * vscplay-config
