@@ -118,3 +118,4 @@ start-fresh:true // clear the file's content if it is true, just modify the curr
     * vsplay-call
     * vsplay-wait
     * vsplay-config
+    * vsplay-config
