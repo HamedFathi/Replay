@@ -1,5 +1,5 @@
 {
-  "name": "vscode-replay",
+	"name": "vscode-replay",
 	"displayName": "replay",
 	"description": "A Visual Studio Code extension for auto typing.",
 	"version": "0.0.1",
@@ -10,14 +10,19 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:vscode-replay.helloWorld"
+		"onCommand:vscode-replay.play",
+		"onCommand:vscode-replay.reset"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-replay.helloWorld",
-				"title": "Hello World"
+				"command": "vscode-replay.play",
+				"title": "vsc-play"
+			},
+			{
+				"command": "vscode-replay.reset",
+				"title": "vsc-reset"
 			}
 		]
 	},

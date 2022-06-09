@@ -37,7 +37,7 @@ There are a lot of commands this tool supports:
 | ⧉ copy:1:5:2:14 | copy the specified line and column |
 | ⧉ cut:3:4:6:13 | cut the specified line and column |
 | ⧉ paste:6:5:7:20 | paste the specified line and column |
-| ⧉ call: ./../FILE.vsplay | calling the other file to make a chain, should have only one 'call' in the last line |
+| ⧉ call: ./../FILE.vscreplay | calling the other file to make a chain, should have only one 'call' in the last line |
 | ⧉ wait:10:false | waiting for N seconds, if true shows countdown in the vscode as a tiny dialog |
 
 The structure of a command is like
@@ -50,8 +50,8 @@ The structure of a command is like
 
 A `Command` always should use in a separate line so you cannot mix them with the other texts.
 
-* `.vsplay` is the extension.
-* `config.vsplay.js` is the file you can add your custom commands & options globaly.
+* `.vscreplay` is the extension.
+* `config.vscreplay.js` is the file you can add your custom commands & options globaly.
 
 `front-matter` for configs per file
 
@@ -68,7 +68,7 @@ start-fresh:true // clear the file's content if it is true, just modify the curr
 ...
 ```
 
-`config.vsplay.js`
+`config.vscreplay.js`
 
 ```
 {
@@ -86,8 +86,9 @@ start-fresh:true // clear the file's content if it is true, just modify the curr
 
 # TODO
 
+* Name of all .vscreplay files in whole project should be unique.
 * Saving cursor posion in pause or deactiving the windows, ask for continue.
-* adding snippet for all commands & chars
+* Adding snippet for all commands & chars:
     * vsplay-down
     * vsplay-down-more
     * vsplay-up    
