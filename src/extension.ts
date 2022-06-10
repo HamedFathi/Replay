@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from "path";
 import { ReplaySymbols } from './replay-symbols';
+import { repeatSymbols } from './replay-regex';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
