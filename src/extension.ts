@@ -6,6 +6,7 @@ import * as glob from 'glob';
 import * as path from "path";
 import { ReplaySymbols } from './replay-symbols';
 import { repeatSymbols } from './replay-regex';
+import * as gmatter from "gray-matter";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
