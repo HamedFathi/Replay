@@ -55,6 +55,7 @@ A `Command` always should use in a separate line so you cannot mix them with the
 `front-matter` for configs per file
 
 ```
+---
 file: scripts/app.js // looking for the file or creating
 start-line: 46 // typing will start from this line
 start-col:0 // typing will start from this column
