@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
 		var vscFile: vscode.Uri = vscode.Uri.file(file);
 		let dirExists = fs.existsSync(dir);
 		if (!dirExists) {
-			fs.mkdirSync(dir);
+			fs.mkdirSync(dir, { recursive: true });
 		}
 		let fileExists = fs.existsSync(file);
 		let shouldFileEmpty = script.options["clean-file"] ? script.options["clean-file"] : false;
