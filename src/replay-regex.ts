@@ -15,5 +15,3 @@ export function repeatSymbols(text: string): string {
     }
     return text;
 }
-
-

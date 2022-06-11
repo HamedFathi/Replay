@@ -86,6 +86,7 @@ function readScript(filePath: string) {
 	let gm = gmatter(cnt);
 	let text = repeatSymbols(gm.content);
 	text = removeBackSlashR(text);
+	text = replaceAll(text, '⚠\n', '');
 	return {
 		content: text,
 		options: gm.data as { [key: string]: string }
@@ -172,6 +173,14 @@ function typeIt(text: string, pos: vscode.Position) {
 	}
 	if (char == '⇥') {
 		_pos = editor.document.lineAt(pos.line).range.end;
+		char = '';
+	}
+	if (char == '⤒') {
+		_pos = editor.document.lineAt(0).range.start;
+		char = '';
+	}
+	if (char == '⤓') {
+		_pos = editor.document.lineAt(editor.document.lineCount - 1).range.start;
 		char = '';
 	}
 	if (char == '⮒') {

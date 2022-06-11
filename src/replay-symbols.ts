@@ -11,4 +11,5 @@ export enum ReplaySymbols {
     pause = "⭯",                    // \u2B6F
     command = "⧉",                  // \u29C9
     newline = "⮒",                  // \u2B92
+    removeNewline = "⚠"             // \u26A0
 };
