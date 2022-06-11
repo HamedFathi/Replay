@@ -10,15 +10,15 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vscode-replay.play",
+		"onCommand:vscode-replay.replay",
 		"onCommand:vscode-replay.reset"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-replay.play",
-				"title": "vsc-play"
+				"command": "vscode-replay.replay",
+				"title": "vsc-replay"
 			},
 			{
 				"command": "vscode-replay.reset",
@@ -35,7 +35,8 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"dependencies": {
-		"gray-matter": "^4.0.3"
+		"gray-matter": "^4.0.3",
+		"fast-glob": "^3.2.11"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.67.0",

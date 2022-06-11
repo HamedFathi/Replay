@@ -1,13 +1,13 @@
 export enum ReplaySymbols {
-    Down = "↓",         // \u2193
-    Up = "↑",           // \u2191
-    First = "⤒",        // \u2912
-    Last = "⤓",         // \u2913
-    Right = "→",        // \u2192
-    Left = "←",         // \u2190
-    End = "⇥",         // \u21E5
-    Begin = "⇤",       // \u21E4
-    Backspace = "⌫",  // \u232B
-    Pause = "⭯",       // \u2B6F
-    Command = "⧉"      // \u29C9
+    moveCurserToDown = "↓",         // \u2193
+    moveCurserToUp = "↑",           // \u2191
+    goToFirstLine = "⤒",            // \u2912
+    goToLastLane = "⤓",             // \u2913
+    moveCurserToRight = "→",        // \u2192
+    moveCurserToLeft = "←",         // \u2190
+    moveCurserToEnd = "⇥",         // \u21E5
+    moveCurserToBegin = "⇤",       // \u21E4
+    backspace = "⌫",               // \u232B
+    pause = "⭯",                    // \u2B6F
+    command = "⧉"                   // \u29C9
 };

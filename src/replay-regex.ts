@@ -1,4 +1,7 @@
 export function repeatSymbols(text: string): string {
+    if (!text) {
+        return "";
+    }
     let regx = /(([↓⌫↑→←])([0-9]+))/gm;
     let matches = text.match(regx);
     if (matches) {
