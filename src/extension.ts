@@ -48,10 +48,15 @@ export function activate(context: vscode.ExtensionContext) {
 		if (!isValid) {
 			return;
 		}
-		let file = path.join(replayDir, script.options["file-name"]);
+		let file = path.resolve(rootDir, script.options["file"]);
+		let dir = path.dirname(file);
 		var vscFile: vscode.Uri = vscode.Uri.file(file);
+		let dirExists = fs.existsSync(dir);
+		if (!dirExists) {
+			fs.mkdirSync(dir);
+		}
 		let fileExists = fs.existsSync(file);
-		let shouldFileEmpty = script.options["start-fresh"] ? script.options["start-fresh"] : false;
+		let shouldFileEmpty = script.options["clean-file"] ? script.options["clean-file"] : false;
 		if (fileExists) {
 			if (shouldFileEmpty) {
 				fs.writeFileSync(file, "", { encoding: 'utf8' });
@@ -60,8 +65,8 @@ export function activate(context: vscode.ExtensionContext) {
 			fs.writeFileSync(file, "", { encoding: 'utf8' });
 		}
 		await vscode.window.showTextDocument(vscFile);
-		
-		typeIt(script.content, new vscode.Position(10, 10));
+
+		typeIt(script.content, new vscode.Position(0, 0));
 
 		// vscode.window.activeTextEditor?.document.save();
 		var t = 1;
@@ -88,8 +93,8 @@ function readScript(filePath: string) {
 }
 
 function validateScriptConfig(options: { [key: string]: string }): boolean {
-	if (!('file-name' in options)) {
-		vscode.window.showErrorMessage(`You must set 'file-name' in your replay script file.`);
+	if (!('file' in options)) {
+		vscode.window.showErrorMessage(`You must set 'file' in your replay script file.`);
 		return false;
 	}
 	return true;
@@ -169,6 +174,10 @@ function typeIt(text: string, pos: vscode.Position) {
 		_pos = editor.document.lineAt(pos.line).range.end;
 		char = '';
 	}
+	if (char == '⮒') {
+		_pos = new vscode.Position(pos.line + 1, 0);
+		char = '\n';
+	}
 	editor.edit(function (editBuilder) {
 		if (char != '⌫') {
 			editBuilder.insert(_pos, char);
@@ -180,7 +189,7 @@ function typeIt(text: string, pos: vscode.Position) {
 			char = '';
 		}
 		var newSelection = new vscode.Selection(_pos, _pos);
-		if (char == "\n") {
+		if (char == "\n" || char == '⮒') {
 			newSelection = new vscode.Selection(pos, pos);
 			_pos = new vscode.Position(pos.line + 1, 0);
 			char = '';

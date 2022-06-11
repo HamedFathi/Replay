@@ -9,5 +9,6 @@ export enum ReplaySymbols {
     moveCurserToBegin = "⇤",       // \u21E4
     backspace = "⌫",               // \u232B
     pause = "⭯",                    // \u2B6F
-    command = "⧉"                   // \u29C9
+    command = "⧉",                  // \u29C9
+    newline = "⮒",                  // \u2B92
 };
