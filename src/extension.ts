@@ -86,7 +86,8 @@ function readScript(filePath: string) {
 	let gm = gmatter(cnt);
 	let text = repeatSymbols(gm.content);
 	text = removeBackSlashR(text);
-	text = replaceAll(text, '⚠\n', '');
+	let rgx = /⨷\s*\n/gm;
+	text = text.replace(rgx, '');
 	return {
 		content: text,
 		options: gm.data as { [key: string]: string }
