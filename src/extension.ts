@@ -226,6 +226,10 @@ function typeIt(text: string, pos: vscode.Position) {
 		_pos = new vscode.Position(pos.line, pos.character - 1);
 		char = '';
 	}
+	if (char == '⟿') {
+		_pos = new vscode.Position(pos.line, pos.character + 1);
+		char = ' ';
+	}
 	if (char == '⇤') {
 		_pos = new vscode.Position(pos.line, 0);
 		char = '';

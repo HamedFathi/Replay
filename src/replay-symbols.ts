@@ -12,5 +12,6 @@ export enum ReplaySymbols {
     command = "⧉",                  // \u29C9
     newline = "⮒",                  // \u2B92
     removeNewline = "⨷",            // \u2A37
-    endOfFile = "🔚"                // \uD8D3\uDD1A
+    endOfFile = "🔚",               // \uD8D3\uDD1A
+    whitespace = "⟿"               // \u27FF
 };
