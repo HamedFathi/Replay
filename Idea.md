@@ -8,9 +8,12 @@
 | ←         | Left      | Move the cursor left one character |
 | ⇥        | End | Move the cursor to the end of the line |
 | ⇤        | Begin  | Move the cursor to the beginning of the line |
+|⟿        | Whitespace         |  Adding a whitespace |
+|⮒         | Newline |  Adding a new line |
 | ⌫       | Backspace       | Delete the character to the left of the cursor |
 |⭯         | Pause           | Pause the running process and ask user to continue via dialog |
 |⧉        | Command         |  Adding some useful functionality to your script     |
+|⨷        | Remove Newline         |  removng next new line      |
 
 You can use number after the below characters to write less repetetive code:
 
@@ -21,12 +24,15 @@ You can use number after the below characters to write less repetetive code:
 | →5         | Right More     | Move the cursor right 5 characters |
 | ←7         | Left More      | Move the cursor left 5 characters |
 | ⌫8       | Backspace More      | Delete 8 characters to the left of the cursor |
+| ⭯6       | Pause More      | Pause for N seconds |
+| ⮒3       | Newline More      | Adding N new lines |
+|⟿4        | Whitespace More     |  Adding N whitespace |
 
 There are a lot of commands this tool supports:
 
 | Command | Description |
 |:---------|------|
-| ⧉ goto:1:5 | go to the specified line and column |
+| ⧉ goto:1:5 | go to the specified line and column, you can use `eol` for end of line |
 | ⧉ delete:1 |delete whole content of the line and line itself|
 | ⧉ empty:1 |delete whole content of the line but keep the line empty, move the cursor to the beginning of the line|
 | ⧉ delete-after:1:5| delete characters after the specified line and column |
@@ -35,9 +41,9 @@ There are a lot of commands this tool supports:
 | ⧉ shortcut:CTRL K,D |running the specified shortcut of VS Code.|
 | ⧉ duplicate-after:1| duplicate the line after it |
 | ⧉ duplicate-before:1| duplicate the line before it |
-| ⧉ copy:1:5:2:14 | copy the specified line and column |
-| ⧉ cut:3:4:6:13 | cut the specified line and column |
-| ⧉ paste:6:5:7:20 | paste the specified line and column |
+| ⧉ copy:1:5:2:14 | copy the specified line and column, you can use `eol` for end of line |
+| ⧉ cut:3:4:6:13 | cut the specified line and column, you can use `eol` for end of line  |
+| ⧉ paste:6:5:7:20 | paste the specified line and column, you can use `eol` for end of line  |
 | ⧉ wait:10:false:comment | waiting for N seconds, if true shows countdown in the vscode as a tiny dialog with a comment/title if you set |
 
 The structure of a command is like

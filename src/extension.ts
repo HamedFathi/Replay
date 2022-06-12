@@ -15,6 +15,7 @@ let saveDoc: boolean;
 let speed: number;
 let delayNum: number;
 let commands: string[] = [];
+let clipboard: string = "";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -117,7 +118,7 @@ async function replayIt() {
 		delayNum = 400;
 	}
 
-	typeIt(script.content, new vscode.Position(startLine, startCol));
+	await typeIt(script.content, new vscode.Position(startLine, startCol));
 }
 
 function replaceAll(text: string, search: string, replacement: string): string {
@@ -225,7 +226,7 @@ function removeBackSlashR(text: string): string {
 }
 
 let len = 0;
-function typeIt(text: string, pos: vscode.Position) {
+async function typeIt(text: string, pos: vscode.Position) {
 	if (!text) { return; }
 	if (text.length === 0) { return; }
 
@@ -275,23 +276,29 @@ function typeIt(text: string, pos: vscode.Position) {
 	if (char == '⧉') {
 		char = '';
 		let cmd = commands.pop();
-		let gotoRegex = /goto:(.*):(.*)/g;
-		let emptyRegex = /empty:(.*)/g;
-		let deleteRegex = /delete:(.*)/g;
+		let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
+		let emptyRegex = /empty:([0-9]+)/g;
+		let deleteRegex = /delete:([0-9]+)/g;
+		let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
+		let cutRegex = /cut\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
+		let pasteRegex = /paste\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
 		if (cmd) {
 			let gotoMatch = gotoRegex.exec(cmd);
 			let emptyMatch = emptyRegex.exec(cmd);
 			let deleteMatch = deleteRegex.exec(cmd);
+			let copyMatch = copyRegex.exec(cmd);
+			let cutMatch = cutRegex.exec(cmd);
+			let pasteMatch = pasteRegex.exec(cmd);
 			if (gotoMatch) {
 				let line = Number.parseInt(gotoMatch[1]);
-				let col = Number.parseInt(gotoMatch[2]);
+				let col = gotoMatch[2] == 'eol' ? editor.document.lineAt(line).range.end.character : Number.parseInt(gotoMatch[2]);
 				_pos = new vscode.Position(line, col);
 			}
 			if (emptyMatch) {
 				let line = Number.parseInt(emptyMatch[1]);
 				_pos = new vscode.Position(line, 0);
 				let end = editor.document.lineAt(line).range.end;
-				editor.edit(function (editBuilder) {
+				await editor.edit(function (editBuilder) {
 					let newSelection = new vscode.Selection(_pos, end);
 					editBuilder.delete(newSelection);
 				});
@@ -300,9 +307,43 @@ function typeIt(text: string, pos: vscode.Position) {
 				let line = Number.parseInt(deleteMatch[1]);
 				_pos = new vscode.Position(line, 0);
 				let end = new vscode.Position(line + 1, 0);
-				editor.edit(function (editBuilder) {
+				await editor.edit(function (editBuilder) {
 					let newRange = new vscode.Range(_pos, end);
 					editBuilder.delete(newRange);
+				});
+			}
+			if (copyMatch) {
+				let line1 = Number.parseInt(copyMatch[1]);
+				let col1 = copyMatch[2] == 'eol' ? editor.document.lineAt(line1).range.end.character : Number.parseInt(copyMatch[2]);
+				let line2 = Number.parseInt(copyMatch[3]);
+				let col2 = copyMatch[4] == 'eol' ? editor.document.lineAt(line2).range.end.character : Number.parseInt(copyMatch[4]);
+				let pos1 = new vscode.Position(line1, col1);
+				let pos2 = new vscode.Position(line2, col2);
+				clipboard = editor.document.getText(new vscode.Range(pos1, pos2));
+			}
+			if (pasteMatch) {
+				let line1 = Number.parseInt(pasteMatch[1]);
+				let col1 = pasteMatch[2] == 'eol' ? editor.document.lineAt(line1).range.end.character : Number.parseInt(pasteMatch[2]);
+				let line2 = Number.parseInt(pasteMatch[3]);
+				let col2 = pasteMatch[4] == 'eol' ? editor.document.lineAt(line2).range.end.character : Number.parseInt(pasteMatch[4]);
+				let pos1 = new vscode.Position(line1, col1);
+				let pos2 = new vscode.Position(line2, col2);
+				await editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(pos1, pos2);
+					editBuilder.replace(newSelection, clipboard);
+				});
+			}
+			if (cutMatch) {
+				let line1 = Number.parseInt(cutMatch[1]);
+				let col1 = cutMatch[2] == 'eol' ? editor.document.lineAt(line1).range.end.character : Number.parseInt(cutMatch[2]);
+				let line2 = Number.parseInt(cutMatch[3]);
+				let col2 = cutMatch[4] == 'eol' ? editor.document.lineAt(line2).range.end.character : Number.parseInt(cutMatch[4]);
+				let pos1 = new vscode.Position(line1, col1);
+				let pos2 = new vscode.Position(line2, col2);
+				clipboard = editor.document.getText(new vscode.Range(pos1, pos2));
+				await editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(pos1, pos2);
+					editBuilder.delete(newSelection);
 				});
 			}
 		}
@@ -348,7 +389,9 @@ function typeIt(text: string, pos: vscode.Position) {
 					}
 					return;
 				}
-				typeIt(ch, _p);
+				await typeIt(ch, _p);
 			}, delay);
 		});
 }
+
+
