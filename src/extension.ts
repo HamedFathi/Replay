@@ -6,14 +6,15 @@ import * as fs from 'fs';
 import * as fg from 'fast-glob';
 import * as path from "path";
 import { ReplaySymbols } from './replay-symbols';
-import { repeatSymbols } from './replay-regex';
+import { checkCommands, repeatSymbols } from './replay-regex';
 import * as gmatter from "gray-matter";
 import { Script, ScriptConfig } from './Config';
 
 let rootDir, replayFile;
 let saveDoc: boolean;
 let speed: number;
-let dly: number;
+let delayNum: number;
+let commands: string[] = [];
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -47,13 +48,13 @@ export function activate(context: vscode.ExtensionContext) {
 		duplicateDetection(rootDir);
 		let script = readScript(replayFile);
 		// let config = getReplayConfig(rootDir);
-		var isValid = validateScriptConfig(script.options);
+		let isValid = validateScriptConfig(script.options);
 		if (!isValid) {
 			return;
 		}
 		let file = path.resolve(rootDir, script.options.file);
 		let dir = path.dirname(file);
-		var vscFile: vscode.Uri = vscode.Uri.file(file);
+		let vscFile: vscode.Uri = vscode.Uri.file(file);
 		let dirExists = fs.existsSync(dir);
 		if (!dirExists) {
 			fs.mkdirSync(dir, { recursive: true });
@@ -79,16 +80,16 @@ export function activate(context: vscode.ExtensionContext) {
 		if (speed > 200) {
 			speed = 200;
 		}
-		dly = script.options.delay != undefined ? script.options.delay : 250;
-		if (dly < 50) {
-			dly = 50;
+		delayNum = script.options.delay != undefined ? script.options.delay : 250;
+		if (delayNum < 50) {
+			delayNum = 50;
 		}
-		if (dly > 500) {
-			dly = 500;
+		if (delayNum > 400) {
+			delayNum = 400;
 		}
 		typeIt(script.content + "🔚", new vscode.Position(startLine, startCol));
 
-		var t = 1;
+		let t = 1;
 	});
 	context.subscriptions.push(disposable);
 }
@@ -107,8 +108,10 @@ function readScript(filePath: string): Script {
 	text = removeBackSlashR(text);
 	let rgx = /⨷\s*\n/gm;
 	text = text.replace(rgx, '');
+	let data = checkCommands(text);
+	commands = data.commands;
 	return {
-		content: text,
+		content: data.text,
 		options: gm.data as ScriptConfig
 	};
 }
@@ -198,7 +201,7 @@ function removeBackSlashR(text: string): string {
 	return replaceAll(text, '\r', '');
 }
 
-var len = 0;
+let len = 0;
 function typeIt(text: string, pos: vscode.Position) {
 	if (!text) { return; }
 	if (text.length === 0) { return; }
@@ -207,8 +210,8 @@ function typeIt(text: string, pos: vscode.Position) {
 	if (!editor) {
 		return;
 	}
-	var _pos = pos;
-	var char = text.substring(0, 1);
+	let _pos = pos;
+	let char = text.substring(0, 1);
 	++len;
 	if (char == '↓') {
 		_pos = new vscode.Position(pos.line + 1, pos.character);
@@ -246,6 +249,19 @@ function typeIt(text: string, pos: vscode.Position) {
 		_pos = editor.document.lineAt(editor.document.lineCount - 1).range.start;
 		char = '';
 	}
+	if (char == '⧉') {
+		char = '';
+		let cmd = commands.pop();
+		let gotoRegex = /goto:(.*):(.*)/g;
+		if (cmd) {
+			let gotoMatch = gotoRegex.exec(cmd);
+			if (gotoMatch) {
+				let line = Number.parseInt(gotoMatch[1]);
+				let col = Number.parseInt(gotoMatch[2]);
+				_pos = new vscode.Position(line, col);
+			}
+		}
+	}
 	if (char == '⮒') {
 		_pos = new vscode.Position(pos.line + 1, 0);
 		char = '\n';
@@ -260,7 +276,7 @@ function typeIt(text: string, pos: vscode.Position) {
 			editBuilder.delete(selection);
 			char = '';
 		}
-		var newSelection = new vscode.Selection(_pos, _pos);
+		let newSelection = new vscode.Selection(_pos, _pos);
 		if (char == "\n" || char == '⮒') {
 			newSelection = new vscode.Selection(pos, pos);
 			_pos = new vscode.Position(pos.line + 1, 0);
@@ -271,11 +287,11 @@ function typeIt(text: string, pos: vscode.Position) {
 		}
 	})
 		.then(function () {
-			var delay = speed + 80 * Math.random();
-			if (Math.random() < 0.1) { delay += dly; }
-			var _p = new vscode.Position(_pos.line, char.length + _pos.character);
+			let delay = speed + 80 * Math.random();
+			if (Math.random() < 0.1) { delay += delayNum; }
+			let _p = new vscode.Position(_pos.line, char.length + _pos.character);
 			setTimeout(function () {
-				var ch = text.substring(1, text.length);
+				let ch = text.substring(1, text.length);
 				if (ch == '🔚') {
 					if (editor && saveDoc) {
 						editor.document.save();
