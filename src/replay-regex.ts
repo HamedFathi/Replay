@@ -2,7 +2,7 @@ export function repeatSymbols(text: string): string {
     if (!text) {
         return "";
     }
-    let regx = /(([↓⌫↑→←])([0-9]+))/gm;
+    let regx = /(([↓⌫↑→←⮒])([0-9]+))/gm;
     let matches = text.match(regx);
     if (matches) {
         for (let index = 0; index < matches.length; index++) {

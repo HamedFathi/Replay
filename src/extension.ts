@@ -8,8 +8,12 @@ import * as path from "path";
 import { ReplaySymbols } from './replay-symbols';
 import { repeatSymbols } from './replay-regex';
 import * as gmatter from "gray-matter";
+import { Script, ScriptConfig } from './Config';
 
 let rootDir, replayFile;
+let saveDoc: boolean;
+let speed: number;
+let dly: number;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -40,15 +44,14 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 		replayFile = replaceAll(editor.document.uri.fsPath, '\\', '/');
-		let replayDir = path.dirname(replayFile);
 		duplicateDetection(rootDir);
 		let script = readScript(replayFile);
-		let config = getReplayConfig(rootDir);
+		// let config = getReplayConfig(rootDir);
 		var isValid = validateScriptConfig(script.options);
 		if (!isValid) {
 			return;
 		}
-		let file = path.resolve(rootDir, script.options["file"]);
+		let file = path.resolve(rootDir, script.options.file);
 		let dir = path.dirname(file);
 		var vscFile: vscode.Uri = vscode.Uri.file(file);
 		let dirExists = fs.existsSync(dir);
@@ -56,9 +59,9 @@ export function activate(context: vscode.ExtensionContext) {
 			fs.mkdirSync(dir, { recursive: true });
 		}
 		let fileExists = fs.existsSync(file);
-		let shouldFileEmpty = script.options["clean-file"] ? script.options["clean-file"] : false;
+		let isClean = script.options.clean ? script.options.clean : false;
 		if (fileExists) {
-			if (shouldFileEmpty) {
+			if (isClean) {
 				fs.writeFileSync(file, "", { encoding: 'utf8' });
 			}
 		} else {
@@ -66,9 +69,25 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		await vscode.window.showTextDocument(vscFile);
 
-		typeIt(script.content, new vscode.Position(0, 0));
+		let startLine = script.options.line != undefined ? script.options.line : 0;
+		let startCol = script.options.col != undefined ? script.options.col : 0;
+		saveDoc = script.options.save != undefined ? script.options.save : true;
+		speed = script.options.speed != undefined ? script.options.speed : 20;
+		if (speed < 1) {
+			speed = 1;
+		}
+		if (speed > 200) {
+			speed = 200;
+		}
+		dly = script.options.delay != undefined ? script.options.delay : 250;
+		if (dly < 50) {
+			dly = 50;
+		}
+		if (dly > 500) {
+			dly = 500;
+		}
+		typeIt(script.content + "🔚", new vscode.Position(startLine, startCol));
 
-		// vscode.window.activeTextEditor?.document.save();
 		var t = 1;
 	});
 	context.subscriptions.push(disposable);
@@ -81,7 +100,7 @@ function replaceAll(text: string, search: string, replacement: string): string {
 	return text.split(search).join(replacement);
 };
 
-function readScript(filePath: string) {
+function readScript(filePath: string): Script {
 	let cnt = fs.readFileSync(filePath, 'utf8');
 	let gm = gmatter(cnt);
 	let text = repeatSymbols(gm.content);
@@ -90,14 +109,50 @@ function readScript(filePath: string) {
 	text = text.replace(rgx, '');
 	return {
 		content: text,
-		options: gm.data as { [key: string]: string }
+		options: gm.data as ScriptConfig
 	};
 }
 
-function validateScriptConfig(options: { [key: string]: string }): boolean {
+function validateScriptConfig(options: ScriptConfig): boolean {
 	if (!('file' in options)) {
 		vscode.window.showErrorMessage(`You must set 'file' in your replay script file.`);
 		return false;
+	}
+	if (('line' in options)) {
+		if (!Number.isInteger(options.line)) {
+			vscode.window.showErrorMessage(`'line' must set as a positive integer.`);
+			return false;
+		}
+	}
+	if (('col' in options)) {
+		if (!Number.isInteger(options.col)) {
+			vscode.window.showErrorMessage(`'col' must set as a positive integer.`);
+			return false;
+		}
+	}
+	if (('speed' in options)) {
+		if (!Number.isInteger(options.speed)) {
+			vscode.window.showErrorMessage(`'speed' must set as a positive integer.`);
+			return false;
+		}
+	}
+	if (('delay' in options)) {
+		if (!Number.isInteger(options.delay)) {
+			vscode.window.showErrorMessage(`'delay' must set as a positive integer.`);
+			return false;
+		}
+	}
+	if (('clean' in options)) {
+		if (typeof options.clean != 'boolean') {
+			vscode.window.showErrorMessage(`'clean' must set as a boolean.`);
+			return false;
+		}
+	}
+	if (('save' in options)) {
+		if (typeof options.save != 'boolean') {
+			vscode.window.showErrorMessage(`'save' must set as a boolean.`);
+			return false;
+		}
 	}
 	return true;
 }
@@ -143,15 +198,18 @@ function removeBackSlashR(text: string): string {
 	return replaceAll(text, '\r', '');
 }
 
+var len = 0;
 function typeIt(text: string, pos: vscode.Position) {
 	if (!text) { return; }
 	if (text.length === 0) { return; }
+
 	let editor = vscode.window.activeTextEditor;
 	if (!editor) {
 		return;
 	}
 	var _pos = pos;
 	var char = text.substring(0, 1);
+	++len;
 	if (char == '↓') {
 		_pos = new vscode.Position(pos.line + 1, pos.character);
 		char = '';
@@ -209,9 +267,18 @@ function typeIt(text: string, pos: vscode.Position) {
 		}
 	})
 		.then(function () {
-			var delay = 20 + 80 * Math.random();
-			if (Math.random() < 0.1) { delay += 250; }
+			var delay = speed + 80 * Math.random();
+			if (Math.random() < 0.1) { delay += dly; }
 			var _p = new vscode.Position(_pos.line, char.length + _pos.character);
-			setTimeout(function () { typeIt(text.substring(1, text.length), _p); }, delay);
+			setTimeout(function () {
+				var ch = text.substring(1, text.length);
+				if (ch == '🔚') {
+					if (editor && saveDoc) {
+						editor.document.save();
+					}
+					return;
+				}
+				typeIt(ch, _p);
+			}, delay);
 		});
 }
