@@ -10,7 +10,7 @@ import { checkCommands, repeatSymbols } from './replay-regex';
 import * as gmatter from "gray-matter";
 import { Script, ScriptConfig } from './Config';
 
-let rootDir, replayFile;
+let rootDir, replayFile, nextFile: string | undefined;
 let saveDoc: boolean;
 let speed: number;
 let delayNum: number;
@@ -29,73 +29,83 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
 	disposable = vscode.commands.registerCommand('vscode-replay.replay', async () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		let editor = vscode.window.activeTextEditor;
-		if (!editor) {
-			vscode.window.showErrorMessage('No File selected!');
-			return;
-		}
-		rootDir = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-		if (!rootDir) {
-			return;
-		}
-		replayFile = replaceAll(editor.document.uri.fsPath, '\\', '/');
-		duplicateDetection(rootDir);
-		let script = readScript(replayFile);
-		// let config = getReplayConfig(rootDir);
-		let isValid = validateScriptConfig(script.options);
-		if (!isValid) {
-			return;
-		}
-		let file = path.resolve(rootDir, script.options.file);
-		let dir = path.dirname(file);
-		let vscFile: vscode.Uri = vscode.Uri.file(file);
-		let dirExists = fs.existsSync(dir);
-		if (!dirExists) {
-			fs.mkdirSync(dir, { recursive: true });
-		}
-		let fileExists = fs.existsSync(file);
-		let isClean = script.options.clean ? script.options.clean : false;
-		if (fileExists) {
-			if (isClean) {
-				fs.writeFileSync(file, "", { encoding: 'utf8' });
-			}
-		} else {
-			fs.writeFileSync(file, "", { encoding: 'utf8' });
-		}
-		await vscode.window.showTextDocument(vscFile);
-
-		let startLine = script.options.line != undefined ? script.options.line : 0;
-		let startCol = script.options.col != undefined ? script.options.col : 0;
-		saveDoc = script.options.save != undefined ? script.options.save : true;
-		speed = script.options.speed != undefined ? script.options.speed : 20;
-		if (speed < 1) {
-			speed = 1;
-		}
-		if (speed > 200) {
-			speed = 200;
-		}
-		delayNum = script.options.delay != undefined ? script.options.delay : 250;
-		if (delayNum < 50) {
-			delayNum = 50;
-		}
-		if (delayNum > 400) {
-			delayNum = 400;
-		}
-		typeIt(script.content + "🔚", new vscode.Position(startLine, startCol));
-
-		let t = 1;
+		await replayIt();
 	});
 	context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() { }
+
+
+async function replayIt() {
+	let editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		vscode.window.showErrorMessage('No File selected!');
+		return;
+	}
+	rootDir = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+	if (!rootDir) {
+		return;
+	}
+	replayFile = replaceAll(editor.document.uri.fsPath, '\\', '/');
+	duplicateDetection(rootDir);
+	let script = readScript(replayFile);
+	// let config = getReplayConfig(rootDir);
+	let isValid = validateScriptConfig(script.options);
+	if (!isValid) {
+		return;
+	}
+	if (script.options.next) {
+		nextFile = replaceAll(path.resolve(rootDir, script.options.next), '\\', '/');
+		if (nextFile == replayFile) {
+			vscode.window.showErrorMessage(`'next' cannot refer to itself.`);
+			return;
+		}
+	}
+	else {
+		nextFile = undefined;
+	}
+	let file = path.resolve(rootDir, script.options.file);
+	let dir = path.dirname(file);
+	let vscFile: vscode.Uri = vscode.Uri.file(file);
+	let dirExists = fs.existsSync(dir);
+	if (!dirExists) {
+		fs.mkdirSync(dir, { recursive: true });
+	}
+	let fileExists = fs.existsSync(file);
+	let isClean = script.options.clean ? script.options.clean : false;
+	if (fileExists) {
+		if (isClean) {
+			fs.writeFileSync(file, "", { encoding: 'utf8' });
+		}
+	} else {
+		fs.writeFileSync(file, "", { encoding: 'utf8' });
+	}
+	await vscode.window.showTextDocument(vscFile);
+
+	let startLine = script.options.line != undefined ? script.options.line : 0;
+	let startCol = script.options.col != undefined ? script.options.col : 0;
+	saveDoc = script.options.save != undefined ? script.options.save : true;
+	speed = script.options.speed != undefined ? script.options.speed : 20;
+	if (speed < 1) {
+		speed = 1;
+	}
+	if (speed > 200) {
+		speed = 200;
+	}
+	delayNum = script.options.delay != undefined ? script.options.delay : 250;
+	if (delayNum < 50) {
+		delayNum = 50;
+	}
+	if (delayNum > 400) {
+		delayNum = 400;
+	}
+
+
+	typeIt(script.content + "🔚", new vscode.Position(startLine, startCol));
+}
 
 function replaceAll(text: string, search: string, replacement: string): string {
 	return text.split(search).join(replacement);
@@ -290,11 +300,16 @@ function typeIt(text: string, pos: vscode.Position) {
 			let delay = speed + 80 * Math.random();
 			if (Math.random() < 0.1) { delay += delayNum; }
 			let _p = new vscode.Position(_pos.line, char.length + _pos.character);
-			setTimeout(function () {
+			setTimeout(async function () {
 				let ch = text.substring(1, text.length);
 				if (ch == '🔚') {
 					if (editor && saveDoc) {
 						editor.document.save();
+					}
+					if (nextFile) {
+						let vscNextFile: vscode.Uri = vscode.Uri.file(nextFile);
+						await vscode.window.showTextDocument(vscNextFile);
+						replayIt();
 					}
 					return;
 				}
