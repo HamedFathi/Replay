@@ -31,6 +31,7 @@ There are a lot of commands this tool supports:
 | ⧉ empty:1 |delete whole content of the line but keep the line empty, move the cursor to the beginning of the line|
 | ⧉ delete-after:1:5| delete characters after the specified line and column |
 | ⧉ delete-before:1:5| delete characters before the specified line and column |
+| ⧉ delete-area:1:5:2:9| delete characters of the specified positions |
 | ⧉ shortcut:CTRL K,D |running the specified shortcut of VS Code.|
 | ⧉ duplicate-after:1| duplicate the line after it |
 | ⧉ duplicate-before:1| duplicate the line before it |

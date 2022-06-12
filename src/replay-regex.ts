@@ -21,11 +21,12 @@ export function checkCommands(text: string): { text: string, commands: string[] 
         return { text, commands: [] };
     }
     let commands: string[] = [];
-    let regx = /⧉.*?\n/gm;
+    let regx = /(⧉.*?\n)|(⧉.*?🔚)/gm;
     let matches = text.match(regx);
     if (matches) {
         for (let index = 0; index < matches.length; index++) {
             let cmd = matches[index];
+            cmd = cmd.replace('🔚', '');
             commands.push(cmd.replace('⧉', '').replace('\n', '').trim());
             text = text.replace(cmd, '⧉');
         }

@@ -58,9 +58,23 @@ async function replayIt() {
 		return;
 	}
 	if (script.options.next) {
-		nextFile = replaceAll(path.resolve(rootDir, script.options.next), '\\', '/');
-		if (nextFile == replayFile) {
+		nextFile = path.resolve(rootDir, script.options.next);
+		let nf = replaceAll(path.resolve(rootDir, script.options.next), '\\', '/');
+		if (nf == replayFile) {
 			vscode.window.showErrorMessage(`'next' cannot refer to itself.`);
+			nextFile = undefined;
+			return;
+		}
+		let nextFileExists = fs.existsSync(nextFile);
+		if (!nextFileExists) {
+			vscode.window.showErrorMessage(`'next' does not exist.`);
+			nextFile = undefined;
+			return;
+		}
+		let nextFileExt = path.extname(nextFile);
+		if (nextFileExt != '.vscreplay') {
+			vscode.window.showErrorMessage(`'next' shoud refer to the '.vscreplay' file format.`);
+			nextFile = undefined;
 			return;
 		}
 	}
@@ -103,8 +117,7 @@ async function replayIt() {
 		delayNum = 400;
 	}
 
-
-	typeIt(script.content + "🔚", new vscode.Position(startLine, startCol));
+	typeIt(script.content, new vscode.Position(startLine, startCol));
 }
 
 function replaceAll(text: string, search: string, replacement: string): string {
@@ -114,7 +127,7 @@ function replaceAll(text: string, search: string, replacement: string): string {
 function readScript(filePath: string): Script {
 	let cnt = fs.readFileSync(filePath, 'utf8');
 	let gm = gmatter(cnt);
-	let text = repeatSymbols(gm.content);
+	let text = repeatSymbols(gm.content) + "🔚";
 	text = removeBackSlashR(text);
 	let rgx = /⨷\s*\n/gm;
 	text = text.replace(rgx, '');
@@ -263,12 +276,34 @@ function typeIt(text: string, pos: vscode.Position) {
 		char = '';
 		let cmd = commands.pop();
 		let gotoRegex = /goto:(.*):(.*)/g;
+		let emptyRegex = /empty:(.*)/g;
+		let deleteRegex = /delete:(.*)/g;
 		if (cmd) {
 			let gotoMatch = gotoRegex.exec(cmd);
+			let emptyMatch = emptyRegex.exec(cmd);
+			let deleteMatch = deleteRegex.exec(cmd);
 			if (gotoMatch) {
 				let line = Number.parseInt(gotoMatch[1]);
 				let col = Number.parseInt(gotoMatch[2]);
 				_pos = new vscode.Position(line, col);
+			}
+			if (emptyMatch) {
+				let line = Number.parseInt(emptyMatch[1]);
+				_pos = new vscode.Position(line, 0);
+				let end = editor.document.lineAt(line).range.end;
+				editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(_pos, end);
+					editBuilder.delete(newSelection);
+				});
+			}
+			if (deleteMatch) {
+				let line = Number.parseInt(deleteMatch[1]);
+				_pos = new vscode.Position(line, 0);
+				let end = new vscode.Position(line + 1, 0);
+				editor.edit(function (editBuilder) {
+					let newRange = new vscode.Range(_pos, end);
+					editBuilder.delete(newRange);
+				});
 			}
 		}
 	}
