@@ -38,7 +38,7 @@ There are a lot of commands this tool supports:
 | ⧉ delete-after:1:5| delete characters after the specified line and column |
 | ⧉ delete-before:1:5| delete characters before the specified line and column |
 | ⧉ delete-area:1:5:2:9| delete characters of the specified positions |
-| ⧉ shortcut:CTRL K,D |running the specified shortcut of VS Code.|
+| ⧉ execute:editor.action.formatDocument |execute the specified command of VS Code.|
 | ⧉ duplicate-after:1| duplicate the line after it |
 | ⧉ duplicate-before:1| duplicate the line before it |
 | ⧉ copy:1:5:2:14:paste:6:5:7:20 | copy & paste the specified line and column, you can use `eol` for end of line |

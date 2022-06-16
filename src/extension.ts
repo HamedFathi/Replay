@@ -281,6 +281,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 		let cmd = commands.pop();
 		let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
 		let emptyRegex = /empty:([0-9]+)/g;
+		let execRegex = /execute:(.+)/g;
 		let deleteRegex = /delete:([0-9]+)/g;
 		let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
 		let cutRegex = /cut\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
@@ -292,6 +293,10 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let copyMatch = copyRegex.exec(cmd);
 			let cutMatch = cutRegex.exec(cmd);
 			let pasteMatch = pasteRegex.exec(cmd);
+			let execMatch = execRegex.exec(cmd);
+			if (execMatch) {
+				await vscode.commands.executeCommand(execMatch[1]);
+			}
 			if (gotoMatch) {
 				let line = Number.parseInt(gotoMatch[1]);
 				let col = gotoMatch[2] == 'eol' ? editor.document.lineAt(line).range.end.character : Number.parseInt(gotoMatch[2]);
@@ -398,10 +403,5 @@ async function typeIt(text: string, pos: vscode.Position) {
 				}, delay);
 			});
 		});
-}
-
-function sleep(ms: number, condition: boolean): Promise<void> {
-	if (condition) { return new Promise(resolve => setTimeout(resolve, ms)); }
-	else { return new Promise(resolve => resolve()); }
 }
 
