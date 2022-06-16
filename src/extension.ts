@@ -283,14 +283,16 @@ async function typeIt(text: string, pos: vscode.Position) {
 		let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
 		let emptyRegex = /empty:([0-9]+)/g;
 		let deleteRegex = /delete:([0-9]+)/g;
-		let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol):paste\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
-		let cutRegex = /cut\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol):paste\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
+		let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
+		let cutRegex = /cut\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
+		let pasteRegex = /paste\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
 		if (cmd) {
 			let gotoMatch = gotoRegex.exec(cmd);
 			let emptyMatch = emptyRegex.exec(cmd);
 			let deleteMatch = deleteRegex.exec(cmd);
 			let copyMatch = copyRegex.exec(cmd);
 			let cutMatch = cutRegex.exec(cmd);
+			let pasteMatch = pasteRegex.exec(cmd);
 			if (gotoMatch) {
 				let line = Number.parseInt(gotoMatch[1]);
 				let col = gotoMatch[2] == 'eol' ? editor.document.lineAt(line).range.end.character : Number.parseInt(gotoMatch[2]);
@@ -322,21 +324,16 @@ async function typeIt(text: string, pos: vscode.Position) {
 				let pos1 = new vscode.Position(line1, col1);
 				let pos2 = new vscode.Position(line2, col2);
 				clipboard = editor.document.getText(new vscode.Range(pos1, pos2));
-				await editor.edit(async function (editBuilder) {
-					if (!copyMatch || !editor) {
-						return;
-					}
-					let pasteline1 = Number.parseInt(copyMatch[5]);
-					let pastecol1 = copyMatch[2] == 'eol' ? editor.document.lineAt(pasteline1).range.end.character : Number.parseInt(copyMatch[6]);
-					let pasteline2 = Number.parseInt(copyMatch[7]);
-					let pastecol2 = copyMatch[4] == 'eol' ? editor.document.lineAt(pasteline2).range.end.character : Number.parseInt(copyMatch[8]);
-					let pastepos1 = new vscode.Position(pasteline1, pastecol1);
-					let pastepos2 = new vscode.Position(pasteline2, pastecol2);
-					await editor.edit(function (editBuilder) {
-						let newSelection = new vscode.Selection(pastepos1, pastepos2);
-						editBuilder.replace(newSelection, clipboard);
-					});
-					let newSelection = new vscode.Selection(pastepos1, pastepos2);
+			}
+			if (pasteMatch) {
+				let line1 = Number.parseInt(pasteMatch[1]);
+				let col1 = pasteMatch[2] == 'eol' ? editor.document.lineAt(line1).range.end.character : Number.parseInt(pasteMatch[2]);
+				let line2 = Number.parseInt(pasteMatch[3]);
+				let col2 = pasteMatch[4] == 'eol' ? editor.document.lineAt(line2).range.end.character : Number.parseInt(pasteMatch[4]);
+				let pos1 = new vscode.Position(line1, col1);
+				let pos2 = new vscode.Position(line2, col2);
+				await editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(pos1, pos2);
 					editBuilder.replace(newSelection, clipboard);
 				});
 			}
@@ -348,20 +345,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 				let pos1 = new vscode.Position(line1, col1);
 				let pos2 = new vscode.Position(line2, col2);
 				clipboard = editor.document.getText(new vscode.Range(pos1, pos2));
-				await editor.edit(async function (editBuilder) {
-					if (!cutMatch || !editor) {
-						return;
-					}
-					let pasteline1 = Number.parseInt(cutMatch[5]);
-					let pastecol1 = cutMatch[2] == 'eol' ? editor.document.lineAt(pasteline1).range.end.character : Number.parseInt(cutMatch[6]);
-					let pasteline2 = Number.parseInt(cutMatch[7]);
-					let pastecol2 = cutMatch[4] == 'eol' ? editor.document.lineAt(pasteline2).range.end.character : Number.parseInt(cutMatch[8]);
-					let pastepos1 = new vscode.Position(pasteline1, pastecol1);
-					let pastepos2 = new vscode.Position(pasteline2, pastecol2);
-					await editor.edit(function (editBuilder) {
-						let newSelection = new vscode.Selection(pastepos1, pastepos2);
-						editBuilder.replace(newSelection, clipboard);
-					});
+				await editor.edit(function (editBuilder) {
 					let newSelection = new vscode.Selection(pos1, pos2);
 					editBuilder.delete(newSelection);
 				});
