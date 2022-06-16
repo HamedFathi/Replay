@@ -41,9 +41,8 @@ There are a lot of commands this tool supports:
 | ⧉ shortcut:CTRL K,D |running the specified shortcut of VS Code.|
 | ⧉ duplicate-after:1| duplicate the line after it |
 | ⧉ duplicate-before:1| duplicate the line before it |
-| ⧉ copy:1:5:2:14 | copy the specified line and column, you can use `eol` for end of line |
-| ⧉ cut:3:4:6:13 | cut the specified line and column, you can use `eol` for end of line  |
-| ⧉ paste:6:5:7:20 | paste the specified line and column, you can use `eol` for end of line  |
+| ⧉ copy:1:5:2:14:paste:6:5:7:20 | copy & paste the specified line and column, you can use `eol` for end of line |
+| ⧉ cut:3:4:6:13:paste:6:5:7:20 | cut & paste the specified line and column, you can use `eol` for end of line  |
 | ⧉ wait:10:false:comment | waiting for N seconds, if true shows countdown in the vscode as a tiny dialog with a comment/title if you set |
 
 The structure of a command is like
