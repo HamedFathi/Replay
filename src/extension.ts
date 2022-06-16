@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fg from 'fast-glob';
 import * as path from "path";
-import { ReplaySymbols } from './replay-symbols';
 import { checkCommands, repeatSymbols } from './replay-regex';
 import * as gmatter from "gray-matter";
 import { Script, ScriptConfig } from './Config';
@@ -51,6 +50,11 @@ async function replayIt() {
 		return;
 	}
 	replayFile = replaceAll(editor.document.uri.fsPath, '\\', '/');
+	let ext = path.extname(replayFile);
+	if (ext !== '.vscreplay') {
+		vscode.window.showErrorMessage("You should select a '.vscreplay' file.");
+		return;
+	}
 	duplicateDetection(rootDir);
 	let script = readScript(replayFile);
 	// let config = getReplayConfig(rootDir);
