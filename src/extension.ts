@@ -22,7 +22,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-replay" is now active!');
 
 	let disposable = vscode.commands.registerCommand('vscode-replay.reset', function () {
 	});
@@ -376,26 +375,33 @@ async function typeIt(text: string, pos: vscode.Position) {
 			editor.selection = newSelection;
 		}
 	})
-		.then(function () {
+		.then(async function () {
 			let delay = speed + 80 * Math.random();
 			if (Math.random() < 0.1) { delay += delayNum; }
 			let _p = new vscode.Position(_pos.line, char.length + _pos.character);
-			setTimeout(async function () {
-				let ch = text.substring(1, text.length);
-				if (ch == '🔚') {
-					if (editor && saveDoc) {
-						editor.document.save();
+			await new Promise<void>((resolve) => {
+				setTimeout(async () => {
+					let ch = text.substring(1, text.length);
+					if (ch == '🔚') {
+						if (editor && saveDoc) {
+							editor.document.save();
+						}
+						if (nextFile) {
+							let vscNextFile: vscode.Uri = vscode.Uri.file(nextFile);
+							await vscode.window.showTextDocument(vscNextFile);
+							replayIt();
+						}
+						return;
 					}
-					if (nextFile) {
-						let vscNextFile: vscode.Uri = vscode.Uri.file(nextFile);
-						await vscode.window.showTextDocument(vscNextFile);
-						replayIt();
-					}
-					return;
-				}
-				await typeIt(ch, _p);
-			}, delay);
+					await typeIt(ch, _p);
+					resolve();
+				}, delay);
+			});
 		});
 }
 
+function sleep(ms: number, condition: boolean): Promise<void> {
+	if (condition) { return new Promise(resolve => setTimeout(resolve, ms)); }
+	else { return new Promise(resolve => resolve()); }
+}
 

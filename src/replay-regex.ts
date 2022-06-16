@@ -33,6 +33,6 @@ export function checkCommands(text: string): { text: string, commands: string[] 
     }
     return {
         text,
-        commands
+        commands: commands.reverse()
     };
 }
