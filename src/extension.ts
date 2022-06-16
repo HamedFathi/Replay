@@ -281,6 +281,8 @@ async function typeIt(text: string, pos: vscode.Position) {
 		let cmd = commands.pop();
 		let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
 		let emptyRegex = /empty:([0-9]+)/g;
+		let dupBeforeRegex = /duplicate-before:([0-9]+)/g;
+		let dupAfterRegex = /duplicate-after:([0-9]+)/g;
 		let execRegex = /execute:(.+)/g;
 		let deleteRegex = /delete:([0-9]+)/g;
 		let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
@@ -294,6 +296,8 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let cutMatch = cutRegex.exec(cmd);
 			let pasteMatch = pasteRegex.exec(cmd);
 			let execMatch = execRegex.exec(cmd);
+			let dbeforeMatch = dupBeforeRegex.exec(cmd);
+			let dafterMatch = dupAfterRegex.exec(cmd);
 			if (execMatch) {
 				await vscode.commands.executeCommand(execMatch[1]);
 			}
@@ -320,6 +324,40 @@ async function typeIt(text: string, pos: vscode.Position) {
 					editBuilder.delete(newRange);
 				});
 			}
+			if (dbeforeMatch) {
+				let copyline1 = Number.parseInt(dbeforeMatch[1]);
+				let copycol1 = 0;
+				let copyline2 = Number.parseInt(dbeforeMatch[1]);
+				let copycol2 = editor.document.lineAt(copyline2).range.end.character;
+				let copypos1 = new vscode.Position(copyline1, copycol1);
+				let copypos2 = new vscode.Position(copyline2, copycol2);
+				let data = editor.document.getText(new vscode.Range(copypos1, copypos2)) + '\n';
+
+				let line1 = Number.parseInt(dbeforeMatch[1]);
+				let col1 = 0;
+				let pos1 = new vscode.Position(line1, col1);
+				await editor.edit(function (editBuilder) {
+					editBuilder.insert(pos1, data);
+				});
+			}
+
+			if (dafterMatch) {
+				let copyline1 = Number.parseInt(dafterMatch[1]);
+				let copycol1 = 0;
+				let copyline2 = Number.parseInt(dafterMatch[1]);
+				let copycol2 = editor.document.lineAt(copyline2).range.end.character;
+				let copypos1 = new vscode.Position(copyline1, copycol1);
+				let copypos2 = new vscode.Position(copyline2, copycol2);
+				let data = '\n' + editor.document.getText(new vscode.Range(copypos1, copypos2));
+
+				let line1 = Number.parseInt(dafterMatch[1]);
+				let col1 = 0;
+				let pos1 = new vscode.Position(line1, col1);
+				await editor.edit(function (editBuilder) {
+					editBuilder.insert(pos1, data);
+				});
+			}
+
 			if (copyMatch) {
 				let line1 = Number.parseInt(copyMatch[1]);
 				let col1 = copyMatch[2] == 'eol' ? editor.document.lineAt(line1).range.end.character : Number.parseInt(copyMatch[2]);
