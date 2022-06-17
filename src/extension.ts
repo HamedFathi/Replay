@@ -276,7 +276,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 				});
 
 		} else {
-			vscode.window.showInformationMessage(`Pause for ${result.count} second(s).`);
+			vscode.window.showInformationMessage(`Auto typing has been paused for ${result.count} second(s).`);
 			let timer = setTimeout(async () => {
 				pause = false;
 				clearTimeout(timer);

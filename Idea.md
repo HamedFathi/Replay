@@ -45,7 +45,6 @@ There are a lot of commands this tool supports:
 | ⧉ copy:1:5:2:14 | copy the specified line and column, you can use `eol` for end of line |
 | ⧉ cut:3:4:6:13 | cut the specified line and column, you can use `eol` for end of line  |
 | ⧉ paste:6:5:7:20 | paste the specified line and column, you can use `eol` for end of line  |
-| ⧉ wait:10:false:comment | waiting for N seconds, if true shows countdown in the vscode as a tiny dialog with a comment/title if you set |
 
 The structure of a command is like
 
