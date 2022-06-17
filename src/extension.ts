@@ -15,6 +15,7 @@ let speed: number;
 let delayNum: number;
 let commands: string[] = [];
 let clipboard: string = "";
+let pause = false;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -240,6 +241,15 @@ async function typeIt(text: string, pos: vscode.Position) {
 	let _pos = pos;
 	let char = text.substring(0, 1);
 	++len;
+	if (char == '⭯') {
+		char = '';
+		pause = true;
+		let timer = setTimeout(async () => {
+			pause = false;
+			clearTimeout(timer);
+			await typeIt(text.substring(1, text.length), _pos);
+		}, 5000);
+	}
 	if (char == '↓') {
 		_pos = new vscode.Position(pos.line + 1, pos.character);
 		char = '';
@@ -289,6 +299,9 @@ async function typeIt(text: string, pos: vscode.Position) {
 		let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
 		let cutRegex = /cut\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
 		let pasteRegex = /paste\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
+		let deleteAfterRegex = /delete-after\:([0-9]+)\:([0-9]+)/g;
+		let deleteBeforeRegex = /delete-before\:([0-9]+)\:([0-9]+)/g;
+		let deleteAreaRegex = /delete-area\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
 		if (cmd) {
 			let gotoMatch = gotoRegex.exec(cmd);
 			let emptyMatch = emptyRegex.exec(cmd);
@@ -313,8 +326,49 @@ async function typeIt(text: string, pos: vscode.Position) {
 					editBuilder.delete(newSelection);
 				});
 			}
+			let delbeforeMatch = deleteBeforeRegex.exec(cmd);
+			let delafterMatch = deleteAfterRegex.exec(cmd);
+			let delareaMatch = deleteAreaRegex.exec(cmd);
 			if (execMatch) {
 				await vscode.commands.executeCommand(execMatch[1]);
+			}
+			if (delareaMatch) {
+				let daline1 = Number.parseInt(delareaMatch[1]);
+				let dacol1 = delareaMatch[2] == 'eol' ? editor.document.lineAt(daline1).range.end.character : Number.parseInt(delareaMatch[2]);
+				let daline2 = Number.parseInt(delareaMatch[3]);
+				let dacol2 = delareaMatch[4] == 'eol' ? editor.document.lineAt(daline2).range.end.character : Number.parseInt(delareaMatch[4]);
+				let dapos1 = new vscode.Position(daline1, dacol1);
+				let dapos2 = new vscode.Position(daline2, dacol2);
+				clipboard = editor.document.getText(new vscode.Range(dapos1, dapos2));
+				await editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(dapos1, dapos2);
+					editBuilder.delete(newSelection);
+				});
+			}
+
+			if (delbeforeMatch) {
+				let line1 = Number.parseInt(delbeforeMatch[1]);
+				let col1 = 0;
+				let _pos1 = new vscode.Position(line1, col1);
+				let line2 = Number.parseInt(delbeforeMatch[1]);
+				let col2 = Number.parseInt(delbeforeMatch[2]);
+				let _pos2 = new vscode.Position(line2, col2);
+				await editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(_pos1, _pos2);
+					editBuilder.delete(newSelection);
+				});
+			}
+			if (delafterMatch) {
+				let line1 = Number.parseInt(delafterMatch[1]);
+				let col1 = editor.document.lineAt(line1).range.end.character;
+				let _pos1 = new vscode.Position(line1, col1);
+				let line2 = Number.parseInt(delafterMatch[1]);
+				let col2 = Number.parseInt(delafterMatch[2]);
+				let _pos2 = new vscode.Position(line2, col2);
+				await editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(_pos2, _pos1);
+					editBuilder.delete(newSelection);
+				});
 			}
 			if (gotoMatch) {
 				let line = Number.parseInt(gotoMatch[1]);
@@ -366,7 +420,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 				let data = '\n' + editor.document.getText(new vscode.Range(copypos1, copypos2));
 
 				let line1 = Number.parseInt(dafterMatch[1]);
-				let col1 = 0;
+				let col1 = editor.document.lineAt(line1).range.end.character;
 				let pos1 = new vscode.Position(line1, col1);
 				await editor.edit(function (editBuilder) {
 					editBuilder.insert(pos1, data);
@@ -437,6 +491,9 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let delay = speed + 80 * Math.random();
 			if (Math.random() < 0.1) { delay += delayNum; }
 			let _p = new vscode.Position(_pos.line, char.length + _pos.character);
+			if (pause) {
+				return;
+			}
 			await new Promise<void>((resolve) => {
 				setTimeout(async () => {
 					let ch = text.substring(1, text.length);
@@ -457,4 +514,3 @@ async function typeIt(text: string, pos: vscode.Position) {
 			});
 		});
 }
-
