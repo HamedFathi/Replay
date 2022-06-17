@@ -15,7 +15,7 @@ let speed: number;
 let delayNum: number;
 let commands: string[] = [];
 let clipboard: string = "";
-let timer: NodeJS.Timeout;
+let pause = false;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -242,7 +242,13 @@ async function typeIt(text: string, pos: vscode.Position) {
 	let char = text.substring(0, 1);
 	++len;
 	if (char == '⭯') {
-
+		char = '';
+		pause = true;
+		let timer = setTimeout(async () => {
+			pause = false;
+			clearTimeout(timer);
+			await typeIt(text.substring(1, text.length), _pos);
+		}, 5000);
 	}
 	if (char == '↓') {
 		_pos = new vscode.Position(pos.line + 1, pos.character);
@@ -470,8 +476,11 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let delay = speed + 80 * Math.random();
 			if (Math.random() < 0.1) { delay += delayNum; }
 			let _p = new vscode.Position(_pos.line, char.length + _pos.character);
+			if (pause) {
+				return;
+			}
 			await new Promise<void>((resolve) => {
-				timer = setTimeout(async () => {
+				setTimeout(async () => {
 					let ch = text.substring(1, text.length);
 					if (ch == '🔚') {
 						if (editor && saveDoc) {
@@ -490,4 +499,3 @@ async function typeIt(text: string, pos: vscode.Position) {
 			});
 		});
 }
-
