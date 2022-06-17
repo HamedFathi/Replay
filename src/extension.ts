@@ -351,7 +351,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 				let data = '\n' + editor.document.getText(new vscode.Range(copypos1, copypos2));
 
 				let line1 = Number.parseInt(dafterMatch[1]);
-				let col1 = 0;
+				let col1 = editor.document.lineAt(line1).range.end.character;
 				let pos1 = new vscode.Position(line1, col1);
 				await editor.edit(function (editBuilder) {
 					editBuilder.insert(pos1, data);
