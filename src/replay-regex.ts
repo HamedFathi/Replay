@@ -28,7 +28,7 @@ export function checkCommands(text: string): { text: string, commands: string[] 
         for (let index = 0; index < matches.length; index++) {
             let cmd = matches[index];
             cmd = cmd.replace('🔚', '');
-            commands.push(cmd.replace('⧉', '').replace('\n', '').replace(/\s/g, ""));
+            commands.push(cmd.replace('⧉', '').replace('\n', '').trim());
             text = text.replace(cmd, '⧉');
         }
     }
