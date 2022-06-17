@@ -279,6 +279,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 	if (char == '⧉') {
 		char = '';
 		let cmd = commands.pop();
+		let deleteAll = /delete-all/g;
 		let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
 		let emptyRegex = /empty:([0-9]+)/g;
 		let dupBeforeRegex = /duplicate-before:([0-9]+)/g;
@@ -298,6 +299,20 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let execMatch = execRegex.exec(cmd);
 			let dbeforeMatch = dupBeforeRegex.exec(cmd);
 			let dafterMatch = dupAfterRegex.exec(cmd);
+			let deleteAllMatch = deleteAll.exec(cmd);
+			if (deleteAllMatch) {
+				_pos = new vscode.Position(0, 0);
+				let daline1 = 0;
+				let dacol1 = 0;
+				let daline2 = editor.document.lineCount - 1;
+				let dacol2 = editor.document.lineAt(editor.document.lineCount - 1).range.end.character;
+				let dapos1 = new vscode.Position(daline1, dacol1);
+				let dapos2 = new vscode.Position(daline2, dacol2);
+				await editor.edit(function (editBuilder) {
+					let newSelection = new vscode.Selection(dapos1, dapos2);
+					editBuilder.delete(newSelection);
+				});
+			}
 			if (execMatch) {
 				await vscode.commands.executeCommand(execMatch[1]);
 			}

@@ -35,6 +35,7 @@ There are a lot of commands this tool supports:
 | ⧉ goto:1:5 | go to the specified line and column, you can use `eol` for end of line |
 | ⧉ delete:1 |delete whole content of the line and line itself|
 | ⧉ empty:1 |delete whole content of the line but keep the line empty, move the cursor to the beginning of the line|
+| ⧉ delete-all |delete whole content|
 | ⧉ delete-after:1:5| delete characters after the specified line and column |
 | ⧉ delete-before:1:5| delete characters before the specified line and column |
 | ⧉ delete-area:1:5:2:9| delete characters of the specified positions |
