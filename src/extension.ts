@@ -244,11 +244,45 @@ async function typeIt(text: string, pos: vscode.Position) {
 	if (char == '⭯') {
 		char = '';
 		pause = true;
-		let timer = setTimeout(async () => {
-			pause = false;
-			clearTimeout(timer);
-			await typeIt(text.substring(1, text.length), _pos);
-		}, 5000);
+		let result = getCount(text, '⭯');
+		if (result.count == 1) {
+			let interval = setInterval(_ => {
+				vscode.window.showInformationMessage("Do you want to continue?", "Yes", "No")
+					.then(async answer => {
+						if (answer === "Yes") {
+							pause = false;
+							clearInterval(interval);
+							await typeIt(text.substring(1, text.length), _pos);
+						}
+						if (answer === "No") {
+							pause = true;
+							clearInterval(interval);
+							return;
+						}
+					});
+			}, 10000);
+			vscode.window.showInformationMessage("Do you want to continue?", "Yes", "No")
+				.then(async answer => {
+					if (answer === "Yes") {
+						pause = false;
+						clearInterval(interval);
+						await typeIt(text.substring(1, text.length), _pos);
+					}
+					if (answer === "No") {
+						pause = true;
+						clearInterval(interval);
+						return;
+					}
+				});
+
+		} else {
+			vscode.window.showInformationMessage(`Pause for ${result.count} second(s).`);
+			let timer = setTimeout(async () => {
+				pause = false;
+				clearTimeout(timer);
+				await typeIt(result.text, _pos);
+			}, result.count * 1000);
+		}
 	}
 	if (char == '↓') {
 		_pos = new vscode.Position(pos.line + 1, pos.character);
@@ -513,4 +547,24 @@ async function typeIt(text: string, pos: vscode.Position) {
 				}, delay);
 			});
 		});
+}
+
+
+
+function getCount(text: string, ch: string): { text: string, count: number } {
+
+	let count = 0;
+	for (let index = 0; index < text.length; index++) {
+		const item = text[index];
+		if (item == ch) {
+			count++;
+		}
+		else {
+			break;
+		}
+	}
+	return {
+		count,
+		text: text.substring(count)
+	};
 }
