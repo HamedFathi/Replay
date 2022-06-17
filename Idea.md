@@ -35,14 +35,15 @@ There are a lot of commands this tool supports:
 | ⧉ goto:1:5 | go to the specified line and column, you can use `eol` for end of line |
 | ⧉ delete:1 |delete whole content of the line and line itself|
 | ⧉ empty:1 |delete whole content of the line but keep the line empty, move the cursor to the beginning of the line|
-| ⧉ delete-after:1:5| delete characters after the specified line and column |
-| ⧉ delete-before:1:5| delete characters before the specified line and column |
-| ⧉ delete-area:1:5:2:9| delete characters of the specified positions |
+| ⧉ delete-after:1:5| delete characters after the specified line and column, column N also deletes |
+| ⧉ delete-before:1:5| delete characters before the specified line and column, column N also deletes |
+| ⧉ delete-area:1:5:2:9| delete characters of the specified positions, you can use `eol` for end of line |
 | ⧉ execute:editor.action.formatDocument |execute the specified command of VS Code.|
 | ⧉ duplicate-after:1| duplicate the line after it |
 | ⧉ duplicate-before:1| duplicate the line before it |
-| ⧉ copy:1:5:2:14:paste:6:5:7:20 | copy & paste the specified line and column, you can use `eol` for end of line |
-| ⧉ cut:3:4:6:13:paste:6:5:7:20 | cut & paste the specified line and column, you can use `eol` for end of line  |
+| ⧉ copy:1:5:2:14 | copy the specified line and column, you can use `eol` for end of line |
+| ⧉ cut:3:4:6:13 | cut the specified line and column, you can use `eol` for end of line  |
+| ⧉ paste:6:5:7:20 | paste the specified line and column, you can use `eol` for end of line  |
 | ⧉ wait:10:false:comment | waiting for N seconds, if true shows countdown in the vscode as a tiny dialog with a comment/title if you set |
 
 The structure of a command is like
