@@ -7,6 +7,7 @@ export interface ScriptConfig {
     clean?: boolean,
     next?: string,
     save?: boolean,
+    info?: boolean,
 }
 
 export interface Script {

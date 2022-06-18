@@ -16,6 +16,7 @@ let delayNum: number;
 let commands: string[] = [];
 let clipboard: string = "";
 let pause = false;
+let showInfo: boolean;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -104,6 +105,7 @@ async function replayIt() {
 	}
 	await vscode.window.showTextDocument(vscFile);
 
+	showInfo = script.options.info != undefined ? script.options.info : true;
 	let startLine = script.options.line != undefined ? script.options.line : 0;
 	let startCol = script.options.col != undefined ? script.options.col : 0;
 	saveDoc = script.options.save != undefined ? script.options.save : true;
@@ -182,6 +184,12 @@ function validateScriptConfig(options: ScriptConfig): boolean {
 	if (('save' in options)) {
 		if (typeof options.save != 'boolean') {
 			vscode.window.showErrorMessage(`'save' must set as a boolean.`);
+			return false;
+		}
+	}
+	if (('info' in options)) {
+		if (typeof options.info != 'boolean') {
+			vscode.window.showErrorMessage(`'info' must set as a boolean.`);
 			return false;
 		}
 	}
@@ -276,7 +284,9 @@ async function typeIt(text: string, pos: vscode.Position) {
 				});
 
 		} else {
-			vscode.window.showInformationMessage(`Auto typing has been paused for ${result.count} second(s).`);
+			if (showInfo) {
+				vscode.window.showInformationMessage(`Auto typing has been paused for ${result.count} second(s).`);
+			}
 			let timer = setTimeout(async () => {
 				pause = false;
 				clearTimeout(timer);
@@ -388,7 +398,9 @@ async function typeIt(text: string, pos: vscode.Position) {
 				pause = true;
 				let count = Number.parseInt(waitnMatch[1].replace(/\s/g, ""));
 				let msg = waitnMatch[2].trim() == "" ? "" : `${waitnMatch[2]}, `;
-				vscode.window.showInformationMessage(`${msg}Paused for ${count} second(s).`);
+				if (showInfo && msg != "") {
+					vscode.window.showInformationMessage(`${msg}Paused for ${count} second(s).`);
+				}
 				let timer = setTimeout(async () => {
 					pause = false;
 					clearTimeout(timer);
