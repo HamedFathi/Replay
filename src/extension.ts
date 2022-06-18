@@ -353,9 +353,9 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let waitMatch = wait.exec(cmd);
 			if (waitMatch) {
 				pause = true;
-				let msg = waitMatch[1].trim() == "" ? "" : `\n${waitMatch[1]}`;
+				let msg = waitMatch[1].trim() == "" ? "" : `${waitMatch[1]}, `;
 				let interval = setInterval(_ => {
-					vscode.window.showInformationMessage(`Do you want to continue?${msg}`, "Yes", "No")
+					vscode.window.showInformationMessage(`${msg}Continue?`, "Yes", "No")
 						.then(async answer => {
 							if (answer === "Yes") {
 								pause = false;
@@ -369,7 +369,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 							}
 						});
 				}, 10000);
-				vscode.window.showInformationMessage(`Do you want to continue?${msg}`, "Yes", "No")
+				vscode.window.showInformationMessage(`${msg}Continue?`, "Yes", "No")
 					.then(async answer => {
 						if (answer === "Yes") {
 							pause = false;
@@ -387,8 +387,8 @@ async function typeIt(text: string, pos: vscode.Position) {
 			if (waitnMatch) {
 				pause = true;
 				let count = Number.parseInt(waitnMatch[1].replace(/\s/g, ""));
-				let msg = waitnMatch[2].trim() == "" ? "" : `\n${waitnMatch[2]}`;
-				vscode.window.showInformationMessage(`Auto typing has been paused for ${count} second(s).${msg}`);
+				let msg = waitnMatch[2].trim() == "" ? "" : `${waitnMatch[2]}, `;
+				vscode.window.showInformationMessage(`${msg}Paused for ${count} second(s).`);
 				let timer = setTimeout(async () => {
 					pause = false;
 					clearTimeout(timer);
@@ -601,7 +601,6 @@ async function typeIt(text: string, pos: vscode.Position) {
 
 
 function getCount(text: string, ch: string): { text: string, count: number } {
-
 	let count = 0;
 	for (let index = 0; index < text.length; index++) {
 		const item = text[index];
