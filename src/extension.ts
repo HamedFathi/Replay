@@ -398,7 +398,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 				pause = true;
 				let count = Number.parseInt(waitnMatch[1].replace(/\s/g, ""));
 				let msg = waitnMatch[2].trim() == "" ? "" : `${waitnMatch[2]}, `;
-				if (showInfo && msg != "") {
+				if (showInfo || msg != "") {
 					vscode.window.showInformationMessage(`${msg}Paused for ${count} second(s).`);
 				}
 				let timer = setTimeout(async () => {
