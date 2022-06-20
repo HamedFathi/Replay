@@ -1,3 +1,5 @@
+![replay](https://user-images.githubusercontent.com/8418700/174631473-a25f3eb1-3a97-468b-b574-6f50718db4dc.gif)
+
 # vscode-replay README
 
 This is the README for your extension "vscode-replay". After writing up a brief description, we recommend including the following sections.
