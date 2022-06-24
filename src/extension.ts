@@ -117,8 +117,8 @@ async function replayIt() {
 		speed = 200;
 	}
 	delayNum = script.options.delay != undefined ? script.options.delay : 250;
-	if (delayNum < 50) {
-		delayNum = 50;
+	if (delayNum < 0) {
+		delayNum = 0;
 	}
 	if (delayNum > 400) {
 		delayNum = 400;
@@ -134,7 +134,7 @@ function replaceAll(text: string, search: string, replacement: string): string {
 function readScript(filePath: string): Script {
 	let cnt = fs.readFileSync(filePath, 'utf8');
 	let gm = gmatter(cnt);
-	let text = repeatSymbols(gm.content) + "🔚";
+	let text = "❅" + repeatSymbols(gm.content) + "🔚";
 	text = removeBackSlashR(text);
 	let rgx = /⨷\s*\n/gm;
 	text = text.replace(rgx, '');
@@ -249,6 +249,11 @@ async function typeIt(text: string, pos: vscode.Position) {
 	let _pos = pos;
 	let char = text.substring(0, 1);
 	++len;
+
+	if (char == '❅') {
+		char = '';
+		_pos = new vscode.Position(pos.line, pos.character);
+	}
 	if (char == '⭯') {
 		char = '';
 		pause = true;
@@ -336,6 +341,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 		let waitn = /waitn:([0-9]+):(.+)/g;
 		let wait = /wait:(.+)/g;
 		let deleteAll = /delete-all/g;
+		let speedRegex = /speed:([0-9]+):([0-9]+)/g;
 		let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
 		let emptyRegex = /empty:([0-9]+)/g;
 		let dupBeforeRegex = /duplicate-before:([0-9]+)/g;
@@ -350,6 +356,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 		let deleteAreaRegex = /delete-area\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
 		if (cmd) {
 			let gotoMatch = gotoRegex.exec(cmd);
+			let speedMatch = speedRegex.exec(cmd);
 			let emptyMatch = emptyRegex.exec(cmd);
 			let deleteMatch = deleteRegex.exec(cmd);
 			let copyMatch = copyRegex.exec(cmd);
@@ -361,6 +368,24 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let deleteAllMatch = deleteAll.exec(cmd);
 			let waitnMatch = waitn.exec(cmd);
 			let waitMatch = wait.exec(cmd);
+			if (speedMatch) {
+				let s = Number.parseInt(speedMatch[1]);
+				let d = Number.parseInt(speedMatch[2]);
+				if (s < 1) {
+					s = 1;
+				}
+				if (s > 200) {
+					s = 200;
+				}
+				speed = s;
+				if (d < 0) {
+					d = 0;
+				}
+				if (d > 400) {
+					d = 400;
+				}
+				delayNum = d;
+			}
 			if (waitMatch) {
 				pause = true;
 				let msg = waitMatch[1].trim() == "" ? "" : `${waitMatch[1]}, `;
