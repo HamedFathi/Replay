@@ -11,18 +11,32 @@
 	],
 	"activationEvents": [
 		"onCommand:vscode-replay.replay",
-		"onCommand:vscode-replay.reset"
+		"onCommand:vscode-replay.pause"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"keybindings": [
+			{
+				"command": "vscode-replay.replay",
+				"key": "alt+ctrl+shift+r",
+				"mac": "alt+cmd+shift+p",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "vscode-replay.pause",
+				"key": "alt+ctrl+shift+p",
+				"mac": "alt+cmd+shift+p",
+				"when": "editorTextFocus"
+			}
+		],
 		"commands": [
 			{
 				"command": "vscode-replay.replay",
 				"title": "vsc-replay"
 			},
 			{
-				"command": "vscode-replay.reset",
-				"title": "vsc-reset"
+				"command": "vscode-replay.pause",
+				"title": "vsc-pause"
 			}
 		]
 	},

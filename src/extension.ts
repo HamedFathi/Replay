@@ -17,6 +17,8 @@ let commands: string[] = [];
 let clipboard: string = "";
 let pause = false;
 let showInfo: boolean;
+let globalPosition: vscode.Position;
+let globalText: string = "";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -25,13 +27,21 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 
-	let disposable = vscode.commands.registerCommand('vscode-replay.reset', function () {
+	let disposable = vscode.commands.registerCommand('vscode-replay.pause', async function () {
+		pause = true;
+		await vscode.window.activeTextEditor?.document.save();
 	});
 
 	context.subscriptions.push(disposable);
 
 	disposable = vscode.commands.registerCommand('vscode-replay.replay', async () => {
-		await replayIt();
+		if (pause) {
+			pause = false;
+			await typeIt(globalText.substring(1, globalText.length), globalPosition);
+		}
+		else {
+			await replayIt();
+		}
 	});
 	context.subscriptions.push(disposable);
 }
@@ -41,6 +51,7 @@ export function deactivate() { }
 
 
 async function replayIt() {
+
 	let editor = vscode.window.activeTextEditor;
 	if (!editor) {
 		vscode.window.showErrorMessage('No File selected!');
@@ -611,6 +622,8 @@ async function typeIt(text: string, pos: vscode.Position) {
 			let delay = speed + 80 * Math.random();
 			if (Math.random() < 0.1) { delay += delayNum; }
 			let _p = new vscode.Position(_pos.line, char.length + _pos.character);
+			globalPosition = _p;
+			globalText = text;
 			if (pause) {
 				return;
 			}
@@ -619,7 +632,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 					let ch = text.substring(1, text.length);
 					if (ch == '🔚') {
 						if (editor && saveDoc) {
-							editor.document.save();
+							await editor.document.save();
 						}
 						if (nextFile) {
 							let vscNextFile: vscode.Uri = vscode.Uri.file(nextFile);
