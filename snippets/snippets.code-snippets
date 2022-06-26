@@ -1,0 +1,184 @@
+{
+    "VSCode Replay Down": {
+        "prefix": "replay-down",
+        "description": "move curser to down",
+        "body": [
+            "↓$0"
+        ]
+    },
+    "VSCode Replay Down More": {
+        "prefix": "replay-down-more",
+        "description": "move curser to down more",
+        "body": [
+            "↓${1:count}$0"
+        ]
+    },
+    "VSCode Replay Up": {
+        "prefix": "replay-up",
+        "description": "move curser to up",
+        "body": [
+            "↑$0"
+        ]
+    },
+    "VSCode Replay Up More": {
+        "prefix": "replay-up-more",
+        "description": "move curser to up more",
+        "body": [
+            "↑${1:count}$0"
+        ]
+    },
+    "VSCode Replay Right More": {
+        "prefix": "replay-right-more",
+        "description": "move curser to right more",
+        "body": [
+            "→${1:count}$0"
+        ]
+    },
+    "VSCode Replay Right": {
+        "prefix": "replay-right",
+        "description": "move curser to right",
+        "body": [
+            "→$0"
+        ]
+    },
+    "VSCode Replay Left More": {
+        "prefix": "replay-left-more",
+        "description": "move curser to left more",
+        "body": [
+            "←${1:count}$0"
+        ]
+    },
+    "VSCode Replay Left": {
+        "prefix": "replay-left",
+        "description": "move curser to left",
+        "body": [
+            "←$0"
+        ]
+    },
+    "VSCode Replay First": {
+        "prefix": "replay-first",
+        "description": "move curser to the first line of code",
+        "body": [
+            "⤒$0"
+        ]
+    },
+    "VSCode Replay Last": {
+        "prefix": "replay-last",
+        "description": "move curser to the last line of code",
+        "body": [
+            "⤓$0"
+        ]
+    },
+    "VSCode Replay Begin": {
+        "prefix": "replay-begin",
+        "description": "move curser to the begin o line",
+        "body": [
+            "⇤$0"
+        ]
+    },
+    "VSCode Replay End": {
+        "prefix": "replay-end",
+        "description": "move curser to the end line",
+        "body": [
+            "⇥$0"
+        ]
+    },
+    "VSCode Replay Whitespace": {
+        "prefix": "replay-whitespace",
+        "description": "add a whitespace",
+        "body": [
+            "⟿$0"
+        ]
+    },
+    "VSCode Replay Whitespace More": {
+        "prefix": "replay-whitespace-more",
+        "description": "add more whitespaces",
+        "body": [
+            "⟿${1:count}$0"
+        ]
+    },
+    "VSCode Replay Newline": {
+        "prefix": "replay-newline",
+        "description": "add a new line",
+        "body": [
+            "⮒$0"
+        ]
+    },
+    "VSCode Replay Newline More": {
+        "prefix": "replay-newline-more",
+        "description": "add more new lines",
+        "body": [
+            "⮒${1:count}$0"
+        ]
+    },
+    "VSCode Replay Backspace": {
+        "prefix": "replay-backspace",
+        "description": "add a backspace",
+        "body": [
+            "⌫$0"
+        ]
+    },
+    "VSCode Replay Backspace More": {
+        "prefix": "replay-backspace-more",
+        "description": "add more backspaces",
+        "body": [
+            "⌫${1:count}$0"
+        ]
+    },
+    "VSCode Replay Pause": {
+        "prefix": "replay-pause",
+        "description": "add a second pause",
+        "body": [
+            "⭯$0"
+        ]
+    },
+    "VSCode Replay Pause More": {
+        "prefix": "replay-pause-more",
+        "description": "add more seconds pauses",
+        "body": [
+            "⭯${1:count}$0"
+        ]
+    },
+    "VSCode Replay Remove Newline": {
+        "prefix": "replay-remove-newline",
+        "description": "Remove the newline",
+        "body": [
+            "⨷$0"
+        ]
+    },
+    "VSCode Replay Command": {
+        "prefix": "replay-command",
+        "description": "add command with name",
+        "body": [
+            "⧉{1:name}$0"
+        ]
+    },
+    "VSCode Replay Command Arg 1": {
+        "prefix": "replay-command-arg1",
+        "description": "add command with name & one argument",
+        "body": [
+            "⧉{1:name}:{2:arg1}$0"
+        ]
+    },
+    "VSCode Replay Command Arg 2": {
+        "prefix": "replay-command-arg2",
+        "description": "add command with name & two arguments",
+        "body": [
+            "⧉{1:name}:{2:arg1}:{3:arg2}:$0"
+        ]
+    },
+    "VSCode Replay Command Arg 3": {
+        "prefix": "replay-command-arg3",
+        "description": "add command with name & three arguments",
+        "body": [
+            "⧉{1:name}:{2:arg1}:{3:arg2}:{4:arg3}$0"
+        ]
+    },
+    "VSCode Replay Command Arg 4": {
+        "prefix": "replay-command-arg4",
+        "description": "add command with name & four arguments",
+        "body": [
+            "⧉{1:name}:{2:arg1}:{3:arg2}:{4:arg3}:{5:arg4}$0"
+        ]
+    },
+}

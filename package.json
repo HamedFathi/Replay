@@ -7,7 +7,8 @@
 		"vscode": "^1.67.0"
 	},
 	"categories": [
-		"Other"
+		"Other",
+		"Snippets"
 	],
 	"activationEvents": [
 		"onCommand:vscode-replay.replay",
@@ -15,6 +16,12 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"snippets": [
+			{
+				"language": "plaintext",
+				"path": "./snippets/snippets.code-snippets"
+			}
+		],
 		"keybindings": [
 			{
 				"command": "vscode-replay.replay",
@@ -32,11 +39,11 @@
 		"commands": [
 			{
 				"command": "vscode-replay.replay",
-				"title": "vsc-replay"
+				"title": "vscode-replay"
 			},
 			{
 				"command": "vscode-replay.pause",
-				"title": "vsc-pause"
+				"title": "vscode-pause"
 			}
 		]
 	},
