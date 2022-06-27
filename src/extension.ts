@@ -75,6 +75,9 @@ async function replayIt() {
 		return;
 	}
 	if (script.options.next) {
+		if (script.options.next.trim() == "") {
+			nextFile = undefined;
+		}
 		nextFile = path.resolve(rootDir, script.options.next);
 		let nf = replaceAll(path.resolve(rootDir, script.options.next), '\\', '/');
 		if (nf == replayFile) {
