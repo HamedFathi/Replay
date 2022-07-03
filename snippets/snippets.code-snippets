@@ -286,9 +286,9 @@
             "⧉ wait:${1:comment}$0"
         ]
     },
-    "VSCode Replay Config": {
-        "prefix": "replay-config",
-        "description": "add replay config",
+    "VSCode Replay Setting": {
+        "prefix": "replay-setting",
+        "description": "add replay setting",
         "body": [
             "---",
             "file: ${1:./folder1/sample1.js}",

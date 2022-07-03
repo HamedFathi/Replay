@@ -1,6 +1,6 @@
 ![replay](https://user-images.githubusercontent.com/8418700/174631473-a25f3eb1-3a97-468b-b574-6f50718db4dc.gif)
 
-# vscode-replay
+# Replay
 
 Live coding is the best way for teaching and share your knowledge with others but as you know this is not easy! The idea behind writing this extension is to have live coding with hundred percent accuracy and less stressful moments!
 
@@ -28,33 +28,33 @@ You have full control of the script that you want to type:
 
 |  | Name | Description |
 |:---------:|------|-------------|
-| ↑         | Up            | Move the cursor up one line |
-| ↓         | Down          | Move the cursor down one line |
-| →         | Right         | Move the cursor right one character |
-| ←         | Left          | Move the cursor left one character |
-| ⤒         | First         | Move the cursor to the beginning of the first line |
-| ⤓         | Last          | Move the cursor to the beginning of the last line |
-| ⇤        | Begin         | Move the cursor to the beginning of the line |
-| ⇥        | End           | Move the cursor to the end of the line |
-|⮒         | Newline       |  Adding a new line |
-|⨷        | Remove Newline |  removng next new line      |
-|⟿        | Whitespace     |  Adding a whitespace |
-| ⌫       | Backspace      | Delete the character to the left of the cursor |
-|⭯         | Pause         | Pause the running process and ask user to continue via dialog |
-|⧉        | Command        |  Adding some useful functionality to your script     |
+| ↑         | up            | Move the cursor up one line |
+| ↓         | down          | Move the cursor down one line |
+| →         | right         | Move the cursor right one character |
+| ←         | left          | Move the cursor left one character |
+| ⤒         | first         | Move the cursor to the beginning of the first line |
+| ⤓         | last          | Move the cursor to the beginning of the last line |
+| ⇤        | begin         | Move the cursor to the beginning of the line |
+| ⇥        | end           | Move the cursor to the end of the line |
+|⮒         | newline       |  Adding a new line |
+|⨷        |  remove-newline |  removng next new line      |
+|⟿        |  whitespace     |  Adding a whitespace |
+| ⌫       |  backspace      | Delete the character to the left of the cursor |
+|⭯         | pause         | Pause the running process and ask user to continue via dialog |
+|⧉        |  command        |  Adding some useful functionality to your script     |
 
 You can use number after the below operational characters to write less repetetive code:
 
 |  | Name | Description |
 |:---------:|------|-------------|
-| ↑2         | Up More        | Move the cursor up {N} lines |
-| ↓10         | Down More      | Move the cursor down {N} lines |
-| →5         | Right More     | Move the cursor right {N} characters |
-| ←7         | Left More      | Move the cursor left {N} characters |
-| ⮒3       | Newline More      | Adding {N} new lines |
-|⟿4        | Whitespace More     |  Adding {N} whitespace |
-| ⌫8       | Backspace More      | Delete {N} characters to the left of the cursor |
-| ⭯6       | Pause More      | Pause for {N} seconds |
+| ↑2         | up-more        | Move the cursor up {N} lines |
+| ↓10         | down-more      | Move the cursor down {N} lines |
+| →5         | right-more     | Move the cursor right {N} characters |
+| ←7         | left-more      | Move the cursor left {N} characters |
+| ⮒3       | newline-more      | Adding {N} new lines |
+|⟿4        | whitespace-more     |  Adding {N} whitespace |
+| ⌫8       | backspace-more      | Delete {N} characters to the left of the cursor |
+| ⭯6       | pause-more      | Pause for {N} seconds |
 
 If you set `0` for the count, the extension automatically consider it as `1`.
 ### Commands
@@ -83,6 +83,50 @@ If you set `0` for the count, the extension automatically consider it as `1`.
 ### Snippets
 
 ![snippets](https://user-images.githubusercontent.com/8418700/177030529-5a717407-166e-4916-988c-f5b1b6dc3e50.png)
+
+Copy and paste the characters from this tutorial is not a good way! To work easier you can use the below snippets.
+
+| Name                  | Snippet                      |
+|-----------------------|------------------------------|
+| up                    | replay-up                    |
+| down                  | replay-down                  |
+| right                 | replay-right                 |
+| left                  | replay-left                  |
+| first                 | replay-first                 |
+| last                  | replay-last                  |
+| begin                 | replay-begin                 |
+| end                   | replay-end                   |
+| newline               | replay-newline               |
+| remove-newline        | replay-remove-newline        |
+| whitespace            | replay-whitespace            |
+| backspace             | replay-backspace             |
+| pause                 | replay-pause                 |
+| up-more               | replay-up-more               |
+| down-more             | replay-down-more             |
+| right-more            | replay-right-more            |
+| left-more             | replay-left-more             |
+| newline-more          | replay-newline-more          |
+| whitespace-more       | replay-whitespace-more       |
+| backspace-more        | replay-backspace-more        |
+| pause-more            | replay-pause-more            |
+| command               | replay-command<br/>replay-command-arg1<br/>replay-command-arg2<br/>replay-command-arg3<br/>replay-command-arg4               |
+| goto                  | replay-command-goto                  |
+| delete-line           | replay-command-delete-line           |
+| empty-line            | replay-command-empty-line            |
+| delete-after          | replay-command-delete-after          |
+| delete-before         | replay-command-delete-before         |
+| delete-area           | replay-command-delete-area           |
+| delete-all            | replay-command-delete-all            |
+| execute               | replay-command-execute               |
+| duplicate-line-after  | replay-command-duplicate-line-after  |
+| duplicate-line-before | replay-command-duplicate-line-before |
+| copy                  | replay-command-copy                  |
+| cut                   | replay-command-cut                   |
+| paste                 | replay-command-paste                 |
+| waitn                 | replay-command-waitn                 |
+| wait                  | replay-command-wait                  |
+| Setting               | replay-setting                       |
+
 ## Extension Settings
 
 Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
