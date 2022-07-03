@@ -54,6 +54,8 @@ You can use number after the below operational characters to write less repeteti
 |⟿4        | Whitespace More     |  Adding {N} whitespace |
 | ⌫8       | Backspace More      | Delete {N} characters to the left of the cursor |
 | ⭯6       | Pause More      | Pause for {N} seconds |
+
+If you set `0` for the count, the extension automatically consider it as `1`.
 ### Commands
 
 |  | Name | Description |
@@ -61,18 +63,18 @@ You can use number after the below operational characters to write less repeteti
 | ⧉ goto:1:5 |goto| go to the specified line and column, you can use `eol` for end of line |
 | ⧉ delete:1 |delete-line|delete whole content of the line and line itself|
 | ⧉ empty:1 |empty-line|delete whole content of the line but keep the line empty, move the cursor to the beginning of the line|
-| ⧉ delete-after:1:5|delete-after| delete characters after the specified line and column, column N also deletes |
-| ⧉ delete-before:1:5|delete-before| delete characters before the specified line and column, column N also deletes |
+| ⧉ delete-after:1:5|delete-after| delete characters after the specified line and column, column {N} also deletes |
+| ⧉ delete-before:1:5|delete-before| delete characters before the specified line and column, column {N} also deletes |
 | ⧉ delete-area:1:5:2:9|delete-area| delete characters of the specified positions, you can use `eol` for end of line |
 | ⧉ delete-all |delete-all|delete whole content|
 | ⧉ execute:editor.action.formatDocument |execute|execute the specified command of VS Code.|
 | ⧉ duplicate-line-after:1|duplicate-line-after| duplicate the line after it |
 | ⧉ duplicate-line-before:1|duplicate-line-before| duplicate the line before it |
 | ⧉ copy:1:5:2:14 |copy| copy the specified line and column, you can use `eol` for end of line |
-| ⧉ cut:3:4:6:13 |cut| cut the specified line and column, you can use `eol` for end of line  |
+| ⧉ cut:3:4:6:eol |cut| cut the specified line and column, you can use `eol` for end of line  |
 | ⧉ paste:6:5:7:20 |paste| paste the specified line and column, you can use `eol` for end of line  |
-| ⧉ waitn:10:comment |waitn| waiting for N seconds with a comment if you set |
-| ⧉ wait:comment |wait| Showing a Yes/No dialog with a comment if you set |
+| ⧉ waitn:10 <br/> ⧉ waitn:10:comment |waitn| waiting for {N} seconds with a comment if you set |
+| ⧉ wait <br/> ⧉ wait:comment |wait| Showing a Yes/No dialog with a comment if you set |
 
 ### Settings
 
