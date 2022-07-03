@@ -1,8 +1,15 @@
 ![replay](https://user-images.githubusercontent.com/8418700/174631473-a25f3eb1-3a97-468b-b574-6f50718db4dc.gif)
 
-# vscode-replay README
+# vscode-replay
 
-This is the README for your extension "vscode-replay". After writing up a brief description, we recommend including the following sections.
+Live coding is the best way for teaching and sharing you knowledge with the others but as you know this is not easy!. The idea behind writing this extension was having live coding with 100% accuracy together and less stessfull moments!
+
+You can achive the goal in two different ways:
+
+1. Recording everything via macros.
+2. Replay a pre-defined script.
+
+For the first approach, it is a fast one but not accurate your are recording your mistakes too. As you have predicated I am using the second one to nailed it! 
 
 ## Features
 
