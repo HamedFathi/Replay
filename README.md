@@ -21,6 +21,10 @@ You have full control of the script that you want to type:
 * Present your code perfectly with manual and automatic pause/resume cycle.
 
 ## Usage
+
+For using this extension first you should create a `.vscreplay` file. Anything in this file will auto type exactly as you have written like all charecters, new lines, spaces and so on.
+
+
 ### Operational Characters
 
 |  | Name | Description |
@@ -90,22 +94,22 @@ next: ./sample2.vscreplay
 save: true
 info: true
 ---
-
 ...
-
 ```
 
-| Name| Optional | Default | Description                  |
-|:----|:--------:|:-------:|------------------------------|    
-|file | No       | -       |                              |
-|line | Yes      | 0       |                              |
-|col  | Yes      | 0       |                              | 
-|speed| Yes      | 20      |                              | 
-|delay| Yes      | 250     |                              | 
-|clean| Yes      | true    |                              |
-|next | Yes      | -       |                              |  
-|save | Yes      | true    |                              |
-|info | Yes      | true    |                              |
+| Name| Optional | Default | Description                                               |
+|:----|:--------:|:-------:|-----------------------------------------------------------|    
+|file | No       | -       | The target `file` that you want to type into it.          |
+|line | Yes      | 0       | The starting `line` for typing.                           |
+|col  | Yes      | 0       | The starting `column` for typing.                         | 
+|speed| Yes      | 20      | The `speed` of typing. (1 <= speed <= 200)                | 
+|delay| Yes      | 250     | The random `delay` between of typing. (0 <= speed <= 400) | 
+|clean| Yes      | true    | It `Cleans` the target file's content if it is true     |
+|next | Yes      | -       | The `next` .vscreplay file you want to call after finishing auto typing of this file.|  
+|save | Yes      | true    | `Save` the final result automatically if it is true         |
+|info | Yes      | true    | Show all `info` dialogs about pause times if it is true |
+
+You should use `relative` path for the `file` and `next` setting. The root for starting point is your VS Code workspace folder.
 ### Snippets
 
 ![snippets](https://user-images.githubusercontent.com/8418700/177030529-5a717407-166e-4916-988c-f5b1b6dc3e50.png)
@@ -135,7 +139,7 @@ Copy and paste the characters from this tutorial is not a good way! To work easi
 | whitespace-more       | replay-whitespace-more       |
 | backspace-more        | replay-backspace-more        |
 | pause-more            | replay-pause-more            |
-| command               | replay-command<br/>replay-command-arg1<br/>replay-command-arg2<br/>replay-command-arg3<br/>replay-command-arg4               |
+| command               | replay-command<br/>replay-command-arg1<br/>replay-command-arg2<br/>replay-command-arg3<br/>replay-command-arg4|
 | goto                  | replay-command-goto                  |
 | delete-line           | replay-command-delete-line           |
 | empty-line            | replay-command-empty-line            |
@@ -153,16 +157,14 @@ Copy and paste the characters from this tutorial is not a good way! To work easi
 | wait                  | replay-command-wait                  |
 | Setting               | replay-setting                       |
 
-## Extension Settings
+## Shortcuts
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+For manual control on auto typing your can use the following shortcuts:
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+| Action | Window/Linux   | Mac           |
+|:-------|:--------------:|:-------------:|    
+|Pause   |alt+ctrl+shift+p|alt+cmd+shift+p|
+|Resume  |alt+ctrl+shift+r|alt+cmd+shift+r|
 
 ## Release Notes
 ### 1.0.0
