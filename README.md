@@ -22,8 +22,60 @@ You have full control of the script that you want to type:
 
 ## Usage
 
-For using this extension first you should create a `.vscreplay` file. Anything in this file will auto type exactly as you have written like all charecters, new lines, spaces and so on.
+![usage](https://user-images.githubusercontent.com/8418700/177055779-f487f57d-98a3-463f-adfe-ac110901cf67.png)
 
+For using this extension, first you should create a `.vscreplay` file. Anything in this file will auto type exactly as you have like all charecters, new lines, spaces and so on but you can change the way of typing with the operational characters and commands that are provided before.
+
+`replay` and `pause` commands just work when you have a `.vscreplay` file in your active editor.
+
+For example a file like:
+
+```
+---
+file: ./folder1/folder3/sample.js
+line: 0
+col: 0
+clean: true
+save: true
+---
+// What is Jest?
+// Jest is a delightful JavaScript Testing Framework with a focus on simplicity.
+// How should we write a test with Jest?
+⭯5
+⧉ delete-all
+// (1) Install Jest using your favorite package manager:
+// npm install --save-dev jest
+// or
+// yarn add --dev jest
+⧉ waitn:3:Creating functionality	
+
+// (2) Create a 'sum.js' file:
+function sum(a, b) {⮒⮒}⇥
+↑↑  return a + b;↓
+module.exports = sum;
+⧉ waitn:3:Creating test file	
+
+// (3) Create a file named 'sum.test.js'. This will contain our actual test:
+const sum = require('./sum');
+test('adds 1 + 2 to equal 3', () => {⮒⮒});⇥
+↑↑  expect(sum(1, 2)).toBe(3);↓
+⧉execute:editor.action.formatDocument
+⧉ waitn:3:Configuration
+
+// (4) Add the following section to your 'package.json':
+/*⮒*/↑
+{
+  "scripts": {
+    "test": "jest"
+  }
+}↓↓
+⧉ waitn:3:Running the test
+// (5) Finally, run 'yarn test' or 'npm test' and Jest will print this message:
+// PASS  ./sum.test.js
+// ✓ adds 1 + 2 to equal 3 (5ms)
+```
+
+The sample file also accessible from [here](https://github.com/HamedFathi/Replay/blob/main/sample/sample.vscreplay).
 
 ### Operational Characters
 
