@@ -2,7 +2,7 @@
 
 # Replay
 
-Live coding is the best way for teaching and share your knowledge with others but as you know this is not easy! The idea behind writing this extension is to have live coding with hundred percent accuracy and less stressful moments!
+Live coding is the best way for teaching and sharing your knowledge with others but as you know this is not easy! The idea behind writing this extension is to have live coding with a hundred percent accuracy and less stressful moments!
 
 You can achieve the goal in two different ways:
 
@@ -24,7 +24,7 @@ You have full control of the script that you want to type:
 
 ![usage](https://user-images.githubusercontent.com/8418700/177055779-f487f57d-98a3-463f-adfe-ac110901cf67.png)
 
-For using this extension, first you should create a `.vscreplay` file. Anything in this file will auto type exactly as you have like all charecters, new lines, spaces and so on but you can change the way of typing with the operational characters and commands that are provided before.
+For using this extension, first you should create a `.vscreplay` file. Anything in this file will auto-type exactly as you have like all characters, new lines, spaces, and so on but you can change the way of typing with the operational characters and commands that are provided before.
 
 `replay` and `pause` commands just work when you have a `.vscreplay` file in your active editor.
 
@@ -75,7 +75,7 @@ test('adds 1 + 2 to equal 3', () => {⮒⮒});⇥
 // ✓ adds 1 + 2 to equal 3 (5ms)
 ```
 
-The sample file also accessible from [here](https://github.com/HamedFathi/Replay/blob/main/sample/sample.vscreplay).
+The sample file is also accessible from [here](https://github.com/HamedFathi/Replay/blob/main/sample/sample.vscreplay).
 
 ### Operational Characters
 
@@ -96,7 +96,7 @@ The sample file also accessible from [here](https://github.com/HamedFathi/Replay
 |⭯         | pause         | Pause the running process and ask user to continue via dialog |
 |⧉        |  command        |  Adding some useful functionality to your script     |
 
-You can use number after the below operational characters to write less repetetive code:
+You can use a number after the below operational characters to write less repetitive code:
 
 |  | Name | Description |
 |:---------:|------|-------------|
@@ -109,7 +109,7 @@ You can use number after the below operational characters to write less repeteti
 | ⌫8       | backspace-more      | Delete {N} characters to the left of the cursor |
 | ⭯6       | pause-more      | Pause for {N} seconds |
 
-If you set `0` for the count, the extension automatically consider it as `1`.
+If you set `0` for the count, the extension automatically considers it as `1`.
 ### Commands
 
 |  | Name | Description |
@@ -132,7 +132,7 @@ If you set `0` for the count, the extension automatically consider it as `1`.
 
 ### Settings
 
-Each `.vscreplay` should have a `setting` on top of the file.
+Each `.vscreplay` should have a `setting` on top of the `.vscreplay` file.
 
 ```
 ---
@@ -161,7 +161,7 @@ info: true
 |save | Yes      | true    | `Save` the final result automatically if it is true         |
 |info | Yes      | true    | Show all `info` dialogs about pause times if it is true |
 
-You should use `relative` path for the `file` and `next` setting. The root for starting point is your VS Code workspace folder.
+You should use the `relative` path for the `file` and `next` settings. The root for the starting point is your VS Code workspace folder.
 ### Snippets
 
 ![snippets](https://user-images.githubusercontent.com/8418700/177030529-5a717407-166e-4916-988c-f5b1b6dc3e50.png)
@@ -211,7 +211,7 @@ Copy and paste the characters from this tutorial is not a good way! To work easi
 
 ## Shortcuts
 
-For manual control on auto typing your can use the following shortcuts:
+For manual control on auto typing you can use the following shortcuts:
 
 | Action | Window/Linux   | Mac           |
 |:-------|:--------------:|:-------------:|    
