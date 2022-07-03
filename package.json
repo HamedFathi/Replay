@@ -1,6 +1,7 @@
 {
 	"name": "vscode-replay",
 	"displayName": "replay",
+	"publisher": "hamedfathi",
 	"author": {
 		"name": "Hamed Fathi",
 		"url": "https://github.com/HamedFathi"
