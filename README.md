@@ -21,9 +21,6 @@ You have full control of the script that you want to type:
 * Present your code perfectly with manual and automatic pause/resume cycle.
 
 ## Usage
-
-
-
 ### Operational Characters
 
 |  | Name | Description |
@@ -79,7 +76,36 @@ If you set `0` for the count, the extension automatically consider it as `1`.
 
 ### Settings
 
+Each `.vscreplay` should have a `setting` on top of the file.
 
+```
+---
+file: ./folder1/sample1.js
+line: 0
+col: 0
+speed: 20
+delay: 250
+clean: true
+next: ./sample2.vscreplay
+save: true
+info: true
+---
+
+...
+
+```
+
+| Name| Optional | Default | Description                  |
+|:----|:--------:|:-------:|------------------------------|    
+|file | No       | -       |                              |
+|line | Yes      | 0       |                              |
+|col  | Yes      | 0       |                              | 
+|speed| Yes      | 20      |                              | 
+|delay| Yes      | 250     |                              | 
+|clean| Yes      | true    |                              |
+|next | Yes      | -       |                              |  
+|save | Yes      | true    |                              |
+|info | Yes      | true    |                              |
 ### Snippets
 
 ![snippets](https://user-images.githubusercontent.com/8418700/177030529-5a717407-166e-4916-988c-f5b1b6dc3e50.png)
