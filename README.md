@@ -2,7 +2,7 @@
 
 # vscode-replay
 
-Live coding is the best way for teaching and share your knowledge with others but as you know this is not easy! The idea behind writing this extension is to have live coding with houndred percent accuracy and less stressful moments!
+Live coding is the best way for teaching and share your knowledge with others but as you know this is not easy! The idea behind writing this extension is to have live coding with hundred percent accuracy and less stressful moments!
 
 You can achieve the goal in two different ways:
 
@@ -18,6 +18,7 @@ You have full control of the script that you want to type:
 * Move the cursor in any direction and number you want.
 * Using predefined utility commands to simplify the typing process.
 * Calling commands available in VS Code e.g Format the document by `editor.action.formatDocument`.
+* Present your code perfectly with manual and automatic pause/resume cycle.
 
 ## Usage
 
