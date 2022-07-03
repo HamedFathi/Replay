@@ -358,8 +358,8 @@ async function typeIt(text: string, pos: vscode.Position) {
 		let speedRegex = /speed:([0-9]+):([0-9]+)/g;
 		let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
 		let emptyRegex = /empty:([0-9]+)/g;
-		let dupBeforeRegex = /duplicate-before:([0-9]+)/g;
-		let dupAfterRegex = /duplicate-after:([0-9]+)/g;
+		let dupBeforeRegex = /duplicate-line-before:([0-9]+)/g;
+		let dupAfterRegex = /duplicate-line-after:([0-9]+)/g;
 		let execRegex = /execute:(.+)/g;
 		let deleteRegex = /delete:([0-9]+)/g;
 		let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;

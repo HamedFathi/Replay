@@ -238,14 +238,14 @@
         ]
     },
     "VSCode Replay Command Duplicate After": {
-        "prefix": "replay-command-duplicate-after",
+        "prefix": "replay-command-duplicate-line-after",
         "description": "duplicate the line after it",
         "body": [
             "⧉ duplicate-after:${1:line}$0"
         ]
     },
     "VSCode Replay Command Duplicate Before": {
-        "prefix": "replay-command-duplicate-before",
+        "prefix": "replay-command-duplicate-line-before",
         "description": "duplicate the line before it",
         "body": [
             "⧉ duplicate-before:${1:line}$0"
