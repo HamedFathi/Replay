@@ -222,3 +222,7 @@ For manual control on auto typing you can use the following shortcuts:
 ### 1.0.0
 
 The first release.
+
+## Inspiration
+
+I am heavily inspired by [auto-type](https://github.com/eee-c/auto-type) to implement this extension.
