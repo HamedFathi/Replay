@@ -19,6 +19,7 @@ let pause = false;
 let showInfo: boolean;
 let globalPosition: vscode.Position;
 let globalText: string = "";
+let hasBoost = false;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -101,6 +102,13 @@ async function replayIt() {
 	else {
 		nextFile = undefined;
 	}
+	let boostChar = '↯';
+	let boostParts = script.content.split(boostChar);
+	let boostLength = boostParts.length - 1;
+	if (boostLength > 1) {
+		vscode.window.showErrorMessage(`The count of the boost operation char '↯' is more than 1.`);
+		return;
+	}
 	let file = path.resolve(rootDir, script.options.file);
 	let dir = path.dirname(file);
 	let vscFile: vscode.Uri = vscode.Uri.file(file);
@@ -136,6 +144,10 @@ async function replayIt() {
 	}
 	if (delayNum > 400) {
 		delayNum = 400;
+	}
+
+	if (boostLength == 1) {
+		hasBoost = true;
 	}
 
 	await typeIt(script.content, new vscode.Position(startLine, startCol));
@@ -264,16 +276,36 @@ async function typeIt(text: string, pos: vscode.Position) {
 	let char = text.substring(0, 1);
 	++len;
 
+	if (char == '↯') {
+		hasBoost = false;
+		char = '';
+		_pos = new vscode.Position(pos.line, pos.character);
+	}
 	if (char == '❅') {
 		char = '';
 		_pos = new vscode.Position(pos.line, pos.character);
 	}
 	if (char == '⭯') {
 		char = '';
-		pause = true;
-		let result = getCount(text, '⭯');
-		if (result.count == 1) {
-			let interval = setInterval(_ => {
+		if (!hasBoost) {
+			pause = true;
+			let result = getCount(text, '⭯');
+			if (result.count == 1) {
+				let interval = setInterval(_ => {
+					vscode.window.showInformationMessage("Do you want to continue?", "Yes", "No")
+						.then(async answer => {
+							if (answer === "Yes") {
+								pause = false;
+								clearInterval(interval);
+								await typeIt(text.substring(1, text.length), _pos);
+							}
+							if (answer === "No") {
+								pause = true;
+								clearInterval(interval);
+								return;
+							}
+						});
+				}, 10000);
 				vscode.window.showInformationMessage("Do you want to continue?", "Yes", "No")
 					.then(async answer => {
 						if (answer === "Yes") {
@@ -287,30 +319,17 @@ async function typeIt(text: string, pos: vscode.Position) {
 							return;
 						}
 					});
-			}, 10000);
-			vscode.window.showInformationMessage("Do you want to continue?", "Yes", "No")
-				.then(async answer => {
-					if (answer === "Yes") {
-						pause = false;
-						clearInterval(interval);
-						await typeIt(text.substring(1, text.length), _pos);
-					}
-					if (answer === "No") {
-						pause = true;
-						clearInterval(interval);
-						return;
-					}
-				});
 
-		} else {
-			if (showInfo) {
-				vscode.window.showInformationMessage(`Auto typing has been paused for ${result.count} second(s).`);
+			} else {
+				if (showInfo) {
+					vscode.window.showInformationMessage(`Auto typing has been paused for ${result.count} second(s).`);
+				}
+				let timer = setTimeout(async () => {
+					pause = false;
+					clearTimeout(timer);
+					await typeIt(result.text, _pos);
+				}, result.count * 1000);
 			}
-			let timer = setTimeout(async () => {
-				pause = false;
-				clearTimeout(timer);
-				await typeIt(result.text, _pos);
-			}, result.count * 1000);
 		}
 	}
 	if (char == '↓') {
@@ -400,7 +419,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 				}
 				delayNum = d;
 			}
-			if (waitMatch) {
+			if (waitMatch && !hasBoost) {
 				pause = true;
 				let msg = waitMatch[1].trim() == "" ? "" : `${waitMatch[1]}, `;
 				let interval = setInterval(_ => {
@@ -433,7 +452,7 @@ async function typeIt(text: string, pos: vscode.Position) {
 					});
 			}
 
-			if (waitnMatch) {
+			if (waitnMatch && !hasBoost) {
 				pause = true;
 				let count = Number.parseInt(waitnMatch[1].replace(/\s/g, ""));
 				let msg = waitnMatch[2].trim() == "" ? "" : `${waitnMatch[2]}, `;
@@ -624,6 +643,9 @@ async function typeIt(text: string, pos: vscode.Position) {
 		.then(async function () {
 			let delay = speed + 80 * Math.random();
 			if (Math.random() < 0.1) { delay += delayNum; }
+			if (hasBoost) {
+				delay = 0;
+			}
 			let _p = new vscode.Position(_pos.line, char.length + _pos.character);
 			globalPosition = _p;
 			globalText = text;

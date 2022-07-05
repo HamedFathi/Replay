@@ -125,6 +125,13 @@
             "⌫${1:count}$0"
         ]
     },
+    "VSCode Replay Boost": {
+        "prefix": "replay-boost",
+        "description": "add boost character",
+        "body": [
+            "↯$0"
+        ]
+    },
     "VSCode Replay Pause": {
         "prefix": "replay-pause",
         "description": "add a second pause",
