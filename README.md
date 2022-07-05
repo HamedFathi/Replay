@@ -1,6 +1,11 @@
 ![replay](https://user-images.githubusercontent.com/8418700/174631473-a25f3eb1-3a97-468b-b574-6f50718db4dc.gif)
 
-# Replay
+![](https://vsmarketplacebadge.apphb.com/version/hamedfathi.vscode-replay.svg)
+![](https://vsmarketplacebadge.apphb.com/installs/hamedfathi.vscode-replay.svg)
+![](https://vsmarketplacebadge.apphb.com/downloads/hamedfathi.vscode-replay.svg)
+![](https://vsmarketplacebadge.apphb.com/rating/hamedfathi.vscode-replay.svg)
+
+# [Replay](https://marketplace.visualstudio.com/items?itemName=hamedfathi.vscode-replay)
 
 Live coding is the best way for teaching and sharing your knowledge with others but as you know this is not easy! The idea behind writing this extension is to have live coding with a hundred percent accuracy and less stressful moments!
 
