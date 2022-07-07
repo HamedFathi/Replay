@@ -132,6 +132,13 @@
             "↯$0"
         ]
     },
+    "VSCode Replay Double Boost": {
+        "prefix": "replay-double-boost",
+        "description": "add double boost characters",
+        "body": [
+            "↯↯$0"
+        ]
+    },
     "VSCode Replay Pause": {
         "prefix": "replay-pause",
         "description": "add a second pause",

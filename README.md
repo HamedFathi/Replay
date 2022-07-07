@@ -101,6 +101,7 @@ The sample file is also accessible from [here](https://github.com/HamedFathi/Rep
 |⭯         | pause         | Pause the running process and ask user to continue via dialog |
 |⧉        |  command        |  Adding some useful functionality to your script     |
 |↯        |  boost        |  Sometimes you want to go to specific part of the content with maximum speed.<br/>All waits and pauses will cancel until this character in your content.<br/>You can use this character just once in whole of your script.     |
+|↯↯        |  double-boost        |  It works exactly the same as `boost` but with a pause. It means after reaching the `double boost` you should confirm for resume.|
 
 You can use a number after the below operational characters to write less repetitive code:
 
@@ -198,6 +199,7 @@ Copy and paste the characters from this tutorial is not a good way! To work easi
 | backspace-more        | replay-backspace-more        |
 | pause-more            | replay-pause-more            |
 | boost                 | replay-boost                 |
+| double-boost          | replay-double-boost          |
 | command               | replay-command<br/>replay-command-arg1<br/>replay-command-arg2<br/>replay-command-arg3<br/>replay-command-arg4|
 | goto                  | replay-command-goto                  |
 | delete-line           | replay-command-delete-line           |
@@ -233,6 +235,10 @@ The first release.
 ### 1.1.0
 
 The boost operational character is added.
+
+### 1.2.0
+
+The double-boost operational character is added.
 
 ## Inspiration
 
