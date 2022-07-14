@@ -293,11 +293,25 @@
             "⧉ waitn:${1:seconds}:${2:comment}$0"
         ]
     },
+    "VSCode Replay Command SelectN": {
+        "prefix": "replay-command-selectn",
+        "description": "select the specified position for seconds",
+        "body": [
+            "⧉ selectn:${1:seconds}:${2:line}:${3:column}:${4:line}:${5:column}$0"
+        ]
+    },
     "VSCode Replay Command Wait": {
         "prefix": "replay-command-wait",
         "description": "showing a yes/no dialog with a comment if you set",
         "body": [
             "⧉ wait:${1:comment}$0"
+        ]
+    },
+    "VSCode Replay Command Speed": {
+        "prefix": "replay-command-speed",
+        "description": "control the speed and delay of typing",
+        "body": [
+            "⧉ speed:${1:speed}:${2:delay}$0"
         ]
     },
     "VSCode Replay Setting": {

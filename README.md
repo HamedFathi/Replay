@@ -131,11 +131,13 @@ If you set `0` for the count, the extension automatically considers it as `1`.
 | ⧉ execute:editor.action.formatDocument |execute|execute the specified command of VS Code.|
 | ⧉ duplicate-line-after:1|duplicate-line-after| duplicate the line after it |
 | ⧉ duplicate-line-before:1|duplicate-line-before| duplicate the line before it |
+| ⧉ selectn:10:1:5:2:14 |selectn| select the specified line and column for seconds, you can use `eol` for end of line |
 | ⧉ copy:1:5:2:14 |copy| copy the specified line and column, you can use `eol` for end of line |
 | ⧉ cut:3:4:6:eol |cut| cut the specified line and column, you can use `eol` for end of line  |
 | ⧉ paste:6:5:7:20 |paste| paste the specified line and column, you can use `eol` for end of line  |
 | ⧉ waitn:10 <br/> ⧉ waitn:10:comment |waitn| waiting for {N} seconds with a comment if you set |
 | ⧉ wait <br/> ⧉ wait:comment |wait| Showing a Yes/No dialog with a comment if you set |
+| ⧉ speed <br/> ⧉ speed:speed:delay |speed| Control the speed and delay of typing|
 
 ### Settings
 
@@ -211,11 +213,13 @@ Copy and paste the characters from this tutorial is not a good way! To work easi
 | execute               | replay-command-execute               |
 | duplicate-line-after  | replay-command-duplicate-line-after  |
 | duplicate-line-before | replay-command-duplicate-line-before |
+| selectn               | replay-command-selectn               |
 | copy                  | replay-command-copy                  |
 | cut                   | replay-command-cut                   |
 | paste                 | replay-command-paste                 |
 | waitn                 | replay-command-waitn                 |
 | wait                  | replay-command-wait                  |
+| speed                 | replay-command-speed                 |
 | Setting               | replay-setting                       |
 
 ## Shortcuts
@@ -234,11 +238,17 @@ The first release.
 
 ### 1.1.0
 
-The boost operational character is added.
+The `boost` operational character is added.
 
 ### 1.2.0
 
-The double-boost operational character is added.
+The `double-boost` operational character is added.
+
+### 1.3.0
+
+The `selectn` command is added.
+The `speed` command is added.
+The `esbuild` bundler is added.
 
 ## Inspiration
 

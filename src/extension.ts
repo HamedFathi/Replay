@@ -6,7 +6,7 @@ import * as fs from "fs";
 import * as fg from "fast-glob";
 import * as path from "path";
 import { checkCommands, repeatSymbols } from "./replay-regex";
-import * as gmatter from "gray-matter";
+import gmatter from "gray-matter";
 import { Script, ScriptConfig } from "./Config";
 
 let rootDir, replayFile, nextFile: string | undefined;
@@ -21,6 +21,7 @@ let globalPosition: vscode.Position;
 let globalText: string = "";
 let hasBoost = false;
 let hasBoostWithPause = false;
+let hasSelect = false;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -56,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
 
 async function replayIt() {
   let editor = vscode.window.activeTextEditor;
@@ -316,6 +317,7 @@ async function typeIt(text: string, pos: vscode.Position) {
   if (!editor) {
     return;
   }
+  hasSelect = false;
   let _pos = pos;
   let char = text.substring(0, 1);
   ++len;
@@ -325,8 +327,8 @@ async function typeIt(text: string, pos: vscode.Position) {
     _pos = new vscode.Position(pos.line, pos.character);
     if (hasBoostWithPause) {
       pause = true;
-	  hasBoostWithPause = false;
-	  hasBoost = false;
+      hasBoostWithPause = false;
+      hasBoost = false;
       let interval = setInterval((_) => {
         vscode.window
           .showInformationMessage("Do you want to continue?", "Yes", "No")
@@ -462,6 +464,7 @@ async function typeIt(text: string, pos: vscode.Position) {
     let dupAfterRegex = /duplicate-line-after:([0-9]+)/g;
     let execRegex = /execute:(.+)/g;
     let deleteRegex = /delete:([0-9]+)/g;
+    let selectRegex = /selectn\:([0-9]+)\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
     let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
     let cutRegex = /cut\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
     let pasteRegex = /paste\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
@@ -470,6 +473,7 @@ async function typeIt(text: string, pos: vscode.Position) {
     let deleteAreaRegex =
       /delete-area\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
     if (cmd) {
+      let selectMatch = selectRegex.exec(cmd);
       let gotoMatch = gotoRegex.exec(cmd);
       let speedMatch = speedRegex.exec(cmd);
       let emptyMatch = emptyRegex.exec(cmd);
@@ -550,6 +554,30 @@ async function typeIt(text: string, pos: vscode.Position) {
           clearTimeout(timer);
           await typeIt(text.substring(1, text.length), _pos);
         }, count * 1000);
+      }
+
+      if (selectMatch) {
+        hasSelect = true;
+        pause = true;
+        let delay = Number.parseInt(selectMatch[1].replace(/\s/g, ""));
+        let line1 = Number.parseInt(selectMatch[2].replace(/\s/g, ""));
+        let col1 =
+          selectMatch[3].replace(/\s/g, "") == "eol"
+            ? editor.document.lineAt(line1).range.end.character
+            : Number.parseInt(selectMatch[3].replace(/\s/g, ""));
+        let line2 = Number.parseInt(selectMatch[4].replace(/\s/g, ""));
+        let col2 =
+          selectMatch[5].replace(/\s/g, "") == "eol"
+            ? editor.document.lineAt(line2).range.end.character
+            : Number.parseInt(selectMatch[5].replace(/\s/g, ""));
+        let pos1 = new vscode.Position(line1, col1);
+        let pos2 = new vscode.Position(line2, col2);
+        editor.selections = [new vscode.Selection(pos1, pos2)];
+        let timer = setTimeout(async () => {
+          pause = false;
+          clearTimeout(timer);
+          await typeIt(text.substring(1, text.length), _pos);
+        }, delay * 1000);
       }
 
       if (deleteAllMatch) {
@@ -752,7 +780,7 @@ async function typeIt(text: string, pos: vscode.Position) {
         _pos = new vscode.Position(pos.line + 1, 0);
         char = "";
       }
-      if (editor) {
+      if (editor && !hasSelect) {
         editor.selection = newSelection;
       }
     })
