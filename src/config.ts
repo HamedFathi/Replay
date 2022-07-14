@@ -4,6 +4,8 @@ export interface ScriptConfig {
     col?: number,
     speed?: number,
     delay?: number,
+    bspeed?: number,
+    bdelay?: number,
     clean?: boolean,
     next?: string,
     save?: boolean,

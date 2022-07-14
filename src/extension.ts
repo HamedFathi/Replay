@@ -13,6 +13,9 @@ let rootDir, replayFile, nextFile: string | undefined;
 let saveDoc: boolean;
 let speed: number;
 let delayNum: number;
+
+let sp: number;
+let dl: number;
 let commands: string[] = [];
 let clipboard: string = "";
 let pause = false;
@@ -22,6 +25,8 @@ let globalText: string = "";
 let hasBoost = false;
 let hasBoostWithPause = false;
 let hasSelect = false;
+let bSpeed: number;
+let bDelayNum: number;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -150,19 +155,34 @@ async function replayIt() {
   let startLine = script.options.line != undefined ? script.options.line : 0;
   let startCol = script.options.col != undefined ? script.options.col : 0;
   saveDoc = script.options.save != undefined ? script.options.save : true;
-  speed = script.options.speed != undefined ? script.options.speed : 20;
-  if (speed < 1) {
-    speed = 1;
+  sp = script.options.speed != undefined ? script.options.speed : 20;
+  if (sp < 0) {
+    sp = 0;
   }
-  if (speed > 200) {
-    speed = 200;
+  if (sp > 200) {
+    sp = 200;
   }
-  delayNum = script.options.delay != undefined ? script.options.delay : 250;
-  if (delayNum < 0) {
-    delayNum = 0;
+  dl = script.options.delay != undefined ? script.options.delay : 250;
+  if (dl < 0) {
+    dl = 0;
   }
-  if (delayNum > 400) {
-    delayNum = 400;
+  if (dl > 400) {
+    dl = 400;
+  }
+
+  bSpeed = script.options.bspeed != undefined ? script.options.bspeed : 20;
+  if (bSpeed < 0) {
+    bSpeed = 0;
+  }
+  if (bSpeed > 200) {
+    bSpeed = 200;
+  }
+  bDelayNum = script.options.bdelay != undefined ? script.options.bdelay : 250;
+  if (bDelayNum < 0) {
+    bDelayNum = 0;
+  }
+  if (bDelayNum > 400) {
+    bDelayNum = 400;
   }
 
   if (boostLength == 1) {
@@ -219,6 +239,18 @@ function validateScriptConfig(options: ScriptConfig): boolean {
   if ("delay" in options) {
     if (!Number.isInteger(options.delay)) {
       vscode.window.showErrorMessage(`'delay' must set as a positive integer.`);
+      return false;
+    }
+  }
+  if ("bspeed" in options) {
+    if (!Number.isInteger(options.bspeed)) {
+      vscode.window.showErrorMessage(`'bspeed' must set as a positive integer.`);
+      return false;
+    }
+  }
+  if ("bdelay" in options) {
+    if (!Number.isInteger(options.bdelay)) {
+      vscode.window.showErrorMessage(`'bdelay' must set as a positive integer.`);
       return false;
     }
   }
@@ -317,9 +349,17 @@ async function typeIt(text: string, pos: vscode.Position) {
   if (!editor) {
     return;
   }
+
   hasSelect = false;
   let _pos = pos;
   let char = text.substring(0, 1);
+  if (char == "⌫") {
+    speed = bSpeed;
+    delayNum = bDelayNum;
+  } else {
+    speed = sp;
+    delayNum = dl;
+  }
   ++len;
   if (char == "↯") {
     hasBoost = false;
@@ -490,20 +530,20 @@ async function typeIt(text: string, pos: vscode.Position) {
       if (speedMatch) {
         let s = Number.parseInt(speedMatch[1]);
         let d = Number.parseInt(speedMatch[2]);
-        if (s < 1) {
-          s = 1;
+        if (s < 0) {
+          s = 0;
         }
         if (s > 200) {
           s = 200;
         }
-        speed = s;
+        speed = sp = s;
         if (d < 0) {
           d = 0;
         }
         if (d > 400) {
           d = 400;
         }
-        delayNum = d;
+        delayNum = dl = d;
       }
       if (waitMatch && !hasBoost) {
         pause = true;
@@ -769,6 +809,8 @@ async function typeIt(text: string, pos: vscode.Position) {
       if (char != "⌫") {
         editBuilder.insert(_pos, char);
       } else {
+        speed = bSpeed;
+        delayNum = bDelayNum;
         _pos = new vscode.Position(pos.line, pos.character - 1);
         let selection = new vscode.Selection(_pos, pos);
         editBuilder.delete(selection);
@@ -785,8 +827,8 @@ async function typeIt(text: string, pos: vscode.Position) {
       }
     })
     .then(async function () {
-      let delay = speed + 80 * Math.random();
-      if (Math.random() < 0.1) {
+      let delay = speed + (delayNum == 0 ? 0 : 80 * Math.random());
+      if (Math.random() < 0.1 && !hasBoost && delayNum != 0) {
         delay += delayNum;
       }
       if (hasBoost) {

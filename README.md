@@ -150,6 +150,8 @@ line: 0
 col: 0
 speed: 20
 delay: 250
+bspeed: 20
+bdelay: 250
 clean: true
 next: ./sample2.vscreplay
 save: true
@@ -163,8 +165,10 @@ info: true
 |file | No       | -       | The target `file` that you want to type into it.          |
 |line | Yes      | 0       | The starting `line` for typing.                           |
 |col  | Yes      | 0       | The starting `column` for typing.                         | 
-|speed| Yes      | 20      | The `speed` of typing. (1 <= speed <= 200)                | 
+|speed| Yes      | 20      | The `speed` of typing. (0 <= speed <= 200)                | 
 |delay| Yes      | 250     | The random `delay` between of typing. (0 <= speed <= 400) | 
+|bspeed| Yes      | 20      | The `backspace speed` of typing. (0 <= speed <= 200)                | 
+|bdelay| Yes      | 250     | The random `backspace delay` between of typing. (0 <= speed <= 400) | 
 |clean| Yes      | true    | It `Cleans` the target file's content if it is true     |
 |next | Yes      | -       | The `next` .vscreplay file you want to call after finishing auto typing of this file.|  
 |save | Yes      | true    | `Save` the final result automatically if it is true         |
@@ -234,21 +238,22 @@ For manual control on auto typing you can use the following shortcuts:
 ## Release Notes
 ### 1.0.0
 
-The first release.
+* The first release.
 
 ### 1.1.0
 
-The `boost` operational character is added.
+* The `boost` operational character is added.
 
 ### 1.2.0
 
-The `double-boost` operational character is added.
+* The `double-boost` operational character is added.
 
 ### 1.3.0
 
-The `selectn` command is added.
-The `speed` command is added.
-The `esbuild` bundler is added.
+* The `selectn` command is added.
+* The `speed` command is added.
+* The `esbuild` bundler is added.
+* The `backspace` speed and delay configurations are added.
 
 ## Inspiration
 
