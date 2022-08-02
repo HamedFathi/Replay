@@ -286,6 +286,20 @@
             "⧉ paste:${1:line}:${2:column}:${3:line}:${4:column}$0"
         ]
     },
+    "VSCode Replay Command Save": {
+        "prefix": "replay-command-save",
+        "description": "save content of the specified position in the variable",
+        "body": [
+            "⧉ save:${1:variable}:${2:line}:${3:column}:${4:line}:${5:column}$0"
+        ]
+    },
+    "VSCode Replay Command Restore": {
+        "prefix": "replay-command-restore",
+        "description": "restore variable data in the specified position",
+        "body": [
+            "⧉ restore:${1:variable}:${2:line}:${3:column}:${4:line}:${5:column}$0"
+        ]
+    },
     "VSCode Replay Command WaitN": {
         "prefix": "replay-command-waitn",
         "description": "waiting for seconds with a comment if you set",

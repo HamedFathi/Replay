@@ -27,7 +27,7 @@ let hasBoostWithPause = false;
 let hasSelect = false;
 let bSpeed: number;
 let bDelayNum: number;
-
+let memories = {};
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -498,20 +498,23 @@ async function typeIt(text: string, pos: vscode.Position) {
     let wait = /wait:(.+)/g;
     let deleteAll = /delete-all/g;
     let speedRegex = /speed:([0-9]+):([0-9]+)/g;
-    let gotoRegex = /goto:([0-9]+):([0-9]+|eol)/g;
-    let emptyRegex = /empty:([0-9]+)/g;
-    let dupBeforeRegex = /duplicate-line-before:([0-9]+)/g;
-    let dupAfterRegex = /duplicate-line-after:([0-9]+)/g;
+    let gotoRegex = /goto:([0-9]+|ll):([0-9]+|eol)/g;
+    let emptyRegex = /empty:([0-9]+|ll)/g;
+    let dupBeforeRegex = /duplicate-line-before:([0-9]+|ll)/g;
+    let dupAfterRegex = /duplicate-line-after:([0-9]+|ll)/g;
     let execRegex = /execute:(.+)/g;
-    let deleteRegex = /delete:([0-9]+)/g;
-    let selectRegex = /selectn\:([0-9]+)\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
-    let copyRegex = /copy\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
-    let cutRegex = /cut\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
-    let pasteRegex = /paste\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
-    let deleteAfterRegex = /delete-after\:([0-9]+)\:([0-9]+)/g;
-    let deleteBeforeRegex = /delete-before\:([0-9]+)\:([0-9]+)/g;
+    let deleteRegex = /delete:([0-9]+|ll)/g;
+    let selectRegex = /selectn\:([0-9]+)\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let copyRegex = /copy\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let cutRegex = /cut\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let pasteRegex = /paste\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let deleteAfterRegex = /delete-after\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let deleteBeforeRegex = /delete-before\:([0-9]+|ll)\:([0-9]+|eol)/g;
     let deleteAreaRegex =
-      /delete-area\:([0-9]+)\:([0-9]+|eol)\:([0-9]+)\:([0-9]+|eol)/g;
+      /delete-area\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let saveRegex = /save\:([a-zA-Z][a-zA-Z0-9]*)\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let restoreRegex = /restore\:([a-zA-Z][a-zA-Z0-9]*)\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+
     if (cmd) {
       let selectMatch = selectRegex.exec(cmd);
       let gotoMatch = gotoRegex.exec(cmd);
@@ -527,6 +530,55 @@ async function typeIt(text: string, pos: vscode.Position) {
       let deleteAllMatch = deleteAll.exec(cmd);
       let waitnMatch = waitn.exec(cmd);
       let waitMatch = wait.exec(cmd);
+      let saveMatch = saveRegex.exec(cmd);
+      let restoreMatch = restoreRegex.exec(cmd);
+
+      if (saveMatch) {
+        let variable = saveMatch[1].replace(/\s/g, "");
+        let line1 = saveMatch[2].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(saveMatch[1].replace(/\s/g, ""));
+        let col1 =
+          saveMatch[3].replace(/\s/g, "") == "eol"
+            ? editor.document.lineAt(line1).range.end.character
+            : Number.parseInt(saveMatch[3].replace(/\s/g, ""));
+        let line2 = saveMatch[4].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(saveMatch[4].replace(/\s/g, ""));
+        let col2 =
+          saveMatch[5].replace(/\s/g, "") == "eol"
+            ? editor.document.lineAt(line2).range.end.character
+            : Number.parseInt(saveMatch[5].replace(/\s/g, ""));
+        let pos1 = new vscode.Position(line1, col1);
+        let pos2 = new vscode.Position(line2, col2);
+        memories[variable] = editor.document.getText(new vscode.Range(pos1, pos2));
+      }
+      if (restoreMatch) {
+        let variable = restoreMatch[1].replace(/\s/g, "");
+        if (memories[variable]) {
+          let line1 = restoreMatch[2].replace(/\s/g, "") == "ll"
+            ? editor.document.lineCount - 1
+            : Number.parseInt(restoreMatch[2].replace(/\s/g, ""));
+          let col1 =
+            restoreMatch[3].replace(/\s/g, "") == "eol"
+              ? editor.document.lineAt(line1).range.end.character
+              : Number.parseInt(restoreMatch[3].replace(/\s/g, ""));
+          let line2 = restoreMatch[4].replace(/\s/g, "") == "ll"
+            ? editor.document.lineCount - 1
+            : Number.parseInt(restoreMatch[4].replace(/\s/g, ""));
+          let col2 =
+            restoreMatch[5].replace(/\s/g, "") == "eol"
+              ? editor.document.lineAt(line2).range.end.character
+              : Number.parseInt(restoreMatch[5].replace(/\s/g, ""));
+          let pos1 = new vscode.Position(line1, col1);
+          let pos2 = new vscode.Position(line2, col2);
+          await editor.edit(function (editBuilder) {
+            let newSelection = new vscode.Selection(pos1, pos2);
+            editBuilder.replace(newSelection, memories[variable]);
+          });
+        }
+      }
+
       if (speedMatch) {
         let s = Number.parseInt(speedMatch[1]);
         let d = Number.parseInt(speedMatch[2]);
@@ -600,12 +652,16 @@ async function typeIt(text: string, pos: vscode.Position) {
         hasSelect = true;
         pause = true;
         let delay = Number.parseInt(selectMatch[1].replace(/\s/g, ""));
-        let line1 = Number.parseInt(selectMatch[2].replace(/\s/g, ""));
+        let line1 = selectMatch[2].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(selectMatch[2].replace(/\s/g, ""));
         let col1 =
           selectMatch[3].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line1).range.end.character
             : Number.parseInt(selectMatch[3].replace(/\s/g, ""));
-        let line2 = Number.parseInt(selectMatch[4].replace(/\s/g, ""));
+        let line2 = selectMatch[4].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(selectMatch[4].replace(/\s/g, ""));
         let col2 =
           selectMatch[5].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line2).range.end.character
@@ -641,12 +697,16 @@ async function typeIt(text: string, pos: vscode.Position) {
         await vscode.commands.executeCommand(execMatch[1].replace(/\s/g, ""));
       }
       if (delareaMatch) {
-        let daline1 = Number.parseInt(delareaMatch[1].replace(/\s/g, ""));
+        let daline1 = delareaMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(delareaMatch[1].replace(/\s/g, ""));
         let dacol1 =
           delareaMatch[2].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(daline1).range.end.character
             : Number.parseInt(delareaMatch[2].replace(/\s/g, ""));
-        let daline2 = Number.parseInt(delareaMatch[3].replace(/\s/g, ""));
+        let daline2 = delareaMatch[3].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(delareaMatch[3].replace(/\s/g, ""));
         let dacol2 =
           delareaMatch[4].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(daline2).range.end.character
@@ -661,11 +721,17 @@ async function typeIt(text: string, pos: vscode.Position) {
       }
 
       if (delbeforeMatch) {
-        let line1 = Number.parseInt(delbeforeMatch[1].replace(/\s/g, ""));
+        let line1 = delbeforeMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(delbeforeMatch[1].replace(/\s/g, ""));
         let col1 = 0;
         let _pos1 = new vscode.Position(line1, col1);
-        let line2 = Number.parseInt(delbeforeMatch[1].replace(/\s/g, ""));
-        let col2 = Number.parseInt(delbeforeMatch[2].replace(/\s/g, ""));
+        let line2 = delbeforeMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(delbeforeMatch[1].replace(/\s/g, ""));
+        let col2 = delbeforeMatch[2].replace(/\s/g, "") == "eol"
+          ? editor.document.lineAt(line2).range.end.character
+          : Number.parseInt(delbeforeMatch[2].replace(/\s/g, ""));
         let _pos2 = new vscode.Position(line2, col2);
         await editor.edit(function (editBuilder) {
           let newSelection = new vscode.Selection(_pos1, _pos2);
@@ -673,11 +739,17 @@ async function typeIt(text: string, pos: vscode.Position) {
         });
       }
       if (delafterMatch) {
-        let line1 = Number.parseInt(delafterMatch[1].replace(/\s/g, ""));
+        let line1 = delafterMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(delafterMatch[1].replace(/\s/g, ""));
         let col1 = editor.document.lineAt(line1).range.end.character;
         let _pos1 = new vscode.Position(line1, col1);
-        let line2 = Number.parseInt(delafterMatch[1].replace(/\s/g, ""));
-        let col2 = Number.parseInt(delafterMatch[2].replace(/\s/g, ""));
+        let line2 = delafterMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(delafterMatch[1].replace(/\s/g, ""));
+        let col2 = delafterMatch[2].replace(/\s/g, "") == "eol"
+          ? editor.document.lineAt(line2).range.end.character
+          : Number.parseInt(delafterMatch[2].replace(/\s/g, ""));
         let _pos2 = new vscode.Position(line2, col2);
         await editor.edit(function (editBuilder) {
           let newSelection = new vscode.Selection(_pos2, _pos1);
@@ -685,7 +757,9 @@ async function typeIt(text: string, pos: vscode.Position) {
         });
       }
       if (gotoMatch) {
-        let line = Number.parseInt(gotoMatch[1].replace(/\s/g, ""));
+        let line = gotoMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(gotoMatch[1].replace(/\s/g, ""));
         let col =
           gotoMatch[2].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line).range.end.character
@@ -693,7 +767,9 @@ async function typeIt(text: string, pos: vscode.Position) {
         _pos = new vscode.Position(line, col);
       }
       if (emptyMatch) {
-        let line = Number.parseInt(emptyMatch[1].replace(/\s/g, ""));
+        let line = emptyMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(emptyMatch[1].replace(/\s/g, ""));
         _pos = new vscode.Position(line, 0);
         let end = editor.document.lineAt(line).range.end;
         await editor.edit(function (editBuilder) {
@@ -702,7 +778,9 @@ async function typeIt(text: string, pos: vscode.Position) {
         });
       }
       if (deleteMatch) {
-        let line = Number.parseInt(deleteMatch[1].replace(/\s/g, ""));
+        let line = deleteMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(deleteMatch[1].replace(/\s/g, ""));
         _pos = new vscode.Position(line, 0);
         let end = new vscode.Position(line + 1, 0);
         await editor.edit(function (editBuilder) {
@@ -711,16 +789,21 @@ async function typeIt(text: string, pos: vscode.Position) {
         });
       }
       if (dbeforeMatch) {
-        let copyline1 = Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
+        let copyline1 = dbeforeMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
         let copycol1 = 0;
-        let copyline2 = Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
+        let copyline2 = dbeforeMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
         let copycol2 = editor.document.lineAt(copyline2).range.end.character;
         let copypos1 = new vscode.Position(copyline1, copycol1);
         let copypos2 = new vscode.Position(copyline2, copycol2);
         let data =
           editor.document.getText(new vscode.Range(copypos1, copypos2)) + "\n";
-
-        let line1 = Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
+        let line1 = dbeforeMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
         let col1 = 0;
         let pos1 = new vscode.Position(line1, col1);
         await editor.edit(function (editBuilder) {
@@ -729,16 +812,21 @@ async function typeIt(text: string, pos: vscode.Position) {
       }
 
       if (dafterMatch) {
-        let copyline1 = Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
+        let copyline1 = dafterMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
         let copycol1 = 0;
-        let copyline2 = Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
+        let copyline2 = dafterMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
         let copycol2 = editor.document.lineAt(copyline2).range.end.character;
         let copypos1 = new vscode.Position(copyline1, copycol1);
         let copypos2 = new vscode.Position(copyline2, copycol2);
         let data =
           "\n" + editor.document.getText(new vscode.Range(copypos1, copypos2));
-
-        let line1 = Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
+        let line1 = dafterMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
         let col1 = editor.document.lineAt(line1).range.end.character;
         let pos1 = new vscode.Position(line1, col1);
         await editor.edit(function (editBuilder) {
@@ -747,12 +835,16 @@ async function typeIt(text: string, pos: vscode.Position) {
       }
 
       if (copyMatch) {
-        let line1 = Number.parseInt(copyMatch[1].replace(/\s/g, ""));
+        let line1 = copyMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(copyMatch[1].replace(/\s/g, ""));
         let col1 =
           copyMatch[2].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line1).range.end.character
             : Number.parseInt(copyMatch[2].replace(/\s/g, ""));
-        let line2 = Number.parseInt(copyMatch[3].replace(/\s/g, ""));
+        let line2 = copyMatch[3].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(copyMatch[3].replace(/\s/g, ""));
         let col2 =
           copyMatch[4].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line2).range.end.character
@@ -762,12 +854,16 @@ async function typeIt(text: string, pos: vscode.Position) {
         clipboard = editor.document.getText(new vscode.Range(pos1, pos2));
       }
       if (pasteMatch) {
-        let line1 = Number.parseInt(pasteMatch[1].replace(/\s/g, ""));
+        let line1 = pasteMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(pasteMatch[1].replace(/\s/g, ""));
         let col1 =
           pasteMatch[2].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line1).range.end.character
             : Number.parseInt(pasteMatch[2].replace(/\s/g, ""));
-        let line2 = Number.parseInt(pasteMatch[3].replace(/\s/g, ""));
+        let line2 = pasteMatch[3].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(pasteMatch[3].replace(/\s/g, ""));
         let col2 =
           pasteMatch[4].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line2).range.end.character
@@ -780,12 +876,16 @@ async function typeIt(text: string, pos: vscode.Position) {
         });
       }
       if (cutMatch) {
-        let line1 = Number.parseInt(cutMatch[1].replace(/\s/g, ""));
+        let line1 = cutMatch[1].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(cutMatch[1].replace(/\s/g, ""));
         let col1 =
           cutMatch[2].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line1).range.end.character
             : Number.parseInt(cutMatch[2].replace(/\s/g, ""));
-        let line2 = Number.parseInt(cutMatch[3].replace(/\s/g, ""));
+        let line2 = cutMatch[3].replace(/\s/g, "") == "ll"
+          ? editor.document.lineCount - 1
+          : Number.parseInt(cutMatch[3].replace(/\s/g, ""));
         let col2 =
           cutMatch[4].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line2).range.end.character
