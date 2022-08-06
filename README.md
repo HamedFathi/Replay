@@ -138,7 +138,7 @@ If you set `0` for the count, the extension automatically considers it as `1`.
 | ⧉ waitn:10 <br/> ⧉ waitn:10:comment |waitn| waiting for {N} seconds with a comment if you set |
 | ⧉ wait <br/> ⧉ wait:comment |wait| Showing a Yes/No dialog with a comment if you set |
 | ⧉ speed <br/> ⧉ speed:speed:delay |speed| Control the speed and delay of typing|
-| ⧉ save:clip1:1:4:6:10|save| save the content of the specified area in memory with the variable name of `clip1`, variable name should start with a letter and contains letters & numbers |
+| ⧉ memory:clip1:1:4:6:10|save| save the content of the specified area in memory with the variable name of `clip1`, variable name should start with a letter and contains letters & numbers |
 | ⧉ restore:clip1:0:7:3:22|restore| restore the content of `clip1` variable in the specified area, variable name should start with a letter and contains letters & numbers |
 
 ### Settings
@@ -226,6 +226,8 @@ Copy and paste the characters from this tutorial is not a good way! To work easi
 | waitn                 | replay-command-waitn                 |
 | wait                  | replay-command-wait                  |
 | speed                 | replay-command-speed                 |
+| memory                | replay-command-memory                |
+| restore               | replay-command-restore               |
 | Setting               | replay-setting                       |
 
 ## Shortcuts

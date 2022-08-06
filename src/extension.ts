@@ -512,7 +512,7 @@ async function typeIt(text: string, pos: vscode.Position) {
     let deleteBeforeRegex = /delete-before\:([0-9]+|ll)\:([0-9]+|eol)/g;
     let deleteAreaRegex =
       /delete-area\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
-    let saveRegex = /save\:([a-zA-Z][a-zA-Z0-9]*)\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
+    let memoryRegex = /memory\:([a-zA-Z][a-zA-Z0-9]*)\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
     let restoreRegex = /restore\:([a-zA-Z][a-zA-Z0-9]*)\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
 
     if (cmd) {
@@ -530,25 +530,25 @@ async function typeIt(text: string, pos: vscode.Position) {
       let deleteAllMatch = deleteAll.exec(cmd);
       let waitnMatch = waitn.exec(cmd);
       let waitMatch = wait.exec(cmd);
-      let saveMatch = saveRegex.exec(cmd);
+      let memoryMatch = memoryRegex.exec(cmd);
       let restoreMatch = restoreRegex.exec(cmd);
 
-      if (saveMatch) {
-        let variable = saveMatch[1].replace(/\s/g, "");
-        let line1 = saveMatch[2].replace(/\s/g, "") == "ll"
+      if (memoryMatch) {
+        let variable = memoryMatch[1].replace(/\s/g, "");
+        let line1 = memoryMatch[2].replace(/\s/g, "") == "ll"
           ? editor.document.lineCount - 1
-          : Number.parseInt(saveMatch[1].replace(/\s/g, ""));
+          : Number.parseInt(memoryMatch[1].replace(/\s/g, ""));
         let col1 =
-          saveMatch[3].replace(/\s/g, "") == "eol"
+          memoryMatch[3].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line1).range.end.character
-            : Number.parseInt(saveMatch[3].replace(/\s/g, ""));
-        let line2 = saveMatch[4].replace(/\s/g, "") == "ll"
+            : Number.parseInt(memoryMatch[3].replace(/\s/g, ""));
+        let line2 = memoryMatch[4].replace(/\s/g, "") == "ll"
           ? editor.document.lineCount - 1
-          : Number.parseInt(saveMatch[4].replace(/\s/g, ""));
+          : Number.parseInt(memoryMatch[4].replace(/\s/g, ""));
         let col2 =
-          saveMatch[5].replace(/\s/g, "") == "eol"
+          memoryMatch[5].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line2).range.end.character
-            : Number.parseInt(saveMatch[5].replace(/\s/g, ""));
+            : Number.parseInt(memoryMatch[5].replace(/\s/g, ""));
         let pos1 = new vscode.Position(line1, col1);
         let pos2 = new vscode.Position(line2, col2);
         memories[variable] = editor.document.getText(new vscode.Range(pos1, pos2));
