@@ -121,25 +121,25 @@ If you set `0` for the count, the extension automatically considers it as `1`.
 
 |  | Name | Description |
 |:---------|------|------|
-| ⧉ goto:1:5 |goto| go to the specified line and column, you can use `eol` for end of line |
-| ⧉ delete:1 |delete-line|delete whole content of the line and line itself|
-| ⧉ empty:1 |empty-line|delete whole content of the line but keep the line empty, move the cursor to the beginning of the line|
-| ⧉ delete-after:1:5|delete-after| delete characters after the specified line and column, column {N} also deletes, the deletion applies only to the specified line. |
-| ⧉ delete-before:1:5|delete-before| delete characters before the specified line and column, column {N} also deletes, the deletion applies only to the specified line. |
-| ⧉ delete-area:1:5:2:9|delete-area| delete characters of the specified positions, you can use `eol` for end of line |
+| ⧉ goto:1:5 |goto| go to the specified line and column, you can use `eol` for end of line and `ll` for last line e.g `goto:ll:eol`|
+| ⧉ delete:1 |delete-line|delete whole content of the line and line itself, you can use `ll` for last line|
+| ⧉ empty:1 |empty-line|delete whole content of the line but keep the line empty, move the cursor to the beginning of the line, you can use `ll` for last line|
+| ⧉ delete-after:1:5|delete-after| delete characters after the specified line and column, column {N} also deletes, the deletion applies only to the specified line, you can use `eol` for end of line and `ll` for last line |
+| ⧉ delete-before:1:5|delete-before| delete characters before the specified line and column, column {N} also deletes, the deletion applies only to the specified line, you can use `eol` for end of line and `ll` for last line |
+| ⧉ delete-area:1:5:2:9|delete-area| delete characters of the specified positions, you can use `eol` for end of line and `ll` for last line |
 | ⧉ delete-all |delete-all|delete whole content|
 | ⧉ execute:editor.action.formatDocument |execute|execute the specified command of VS Code.|
-| ⧉ duplicate-line-after:1|duplicate-line-after| duplicate the line after it |
-| ⧉ duplicate-line-before:1|duplicate-line-before| duplicate the line before it |
-| ⧉ selectn:10:1:5:2:14 |selectn| select the specified line and column for seconds, you can use `eol` for end of line |
-| ⧉ copy:1:5:2:14 |copy| copy the specified line and column, you can use `eol` for end of line |
-| ⧉ cut:3:4:6:eol |cut| cut the specified line and column, you can use `eol` for end of line  |
-| ⧉ paste:6:5:7:20 |paste| paste the specified line and column, you can use `eol` for end of line  |
+| ⧉ duplicate-line-after:1|duplicate-line-after| duplicate the line after it, you can use `ll` for last line |
+| ⧉ duplicate-line-before:1|duplicate-line-before| duplicate the line before it, you can use `ll` for last line |
+| ⧉ selectn:10:1:5:2:14 |selectn| select the specified line and column for seconds, you can use `eol` for end of line and `ll` for last line |
+| ⧉ copy:1:5:2:14 |copy| copy the specified line and column, you can use `eol` for end of line and `ll` for last line |
+| ⧉ cut:3:4:6:eol |cut| cut the specified line and column, you can use `eol` for end of line and `ll` for last line  |
+| ⧉ paste:6:5:7:20 |paste| paste the specified line and column, you can use `eol` for end of line and `ll` for last line  |
 | ⧉ waitn:10 <br/> ⧉ waitn:10:comment |waitn| waiting for {N} seconds with a comment if you set |
 | ⧉ wait <br/> ⧉ wait:comment |wait| Showing a Yes/No dialog with a comment if you set |
 | ⧉ speed <br/> ⧉ speed:speed:delay |speed| Control the speed and delay of typing|
-| ⧉ memory:clip1:1:4:6:10|save| save the content of the specified area in memory with the variable name of `clip1`, variable name should start with a letter and contains letters & numbers |
-| ⧉ restore:clip1:0:7:3:22|restore| restore the content of `clip1` variable in the specified area, variable name should start with a letter and contains letters & numbers |
+| ⧉ memory:clip1:1:4:6:10|save| save the content of the specified area in memory with the variable name of `clip1`, variable name should start with a letter and contains letters & numbers, you can use `eol` for end of line and `ll` for last line |
+| ⧉ restore:clip1:0:7:3:22|restore| restore the content of `clip1` variable in the specified area, variable name should start with a letter and contains letters & numbers, you can use `eol` for end of line and `ll` for last line |
 
 ### Settings
 
@@ -258,6 +258,12 @@ For manual control on auto typing you can use the following shortcuts:
 * The `speed` command is added.
 * The `esbuild` bundler is added.
 * The `backspace` speed and delay configurations are added.
+
+### 1.4.0
+
+* The `memory` command is added.
+* The `restore` command is added.
+* The `ll` (last line) is added.
 
 ## Inspiration
 
