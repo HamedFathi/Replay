@@ -537,7 +537,7 @@ async function typeIt(text: string, pos: vscode.Position) {
         let variable = memoryMatch[1].replace(/\s/g, "");
         let line1 = memoryMatch[2].replace(/\s/g, "") == "ll"
           ? editor.document.lineCount - 1
-          : Number.parseInt(memoryMatch[1].replace(/\s/g, ""));
+          : Number.parseInt(memoryMatch[2].replace(/\s/g, ""));
         let col1 =
           memoryMatch[3].replace(/\s/g, "") == "eol"
             ? editor.document.lineAt(line1).range.end.character
