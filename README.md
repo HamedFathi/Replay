@@ -1,3 +1,7 @@
+> [!IMPORTANT] 
+> Introducing **HamedStack**! For all my latest libraries, visit: [Explore HamedStack](https://github.com/HamedStack). Replacements and updates are available at the link. Thank you for your support! The new version of this library is accessible via [HamedStack.Replay.VSCode](https://github.com/HamedStack/HamedStack.Replay.VSCode)
+---
+
 ![replay](https://user-images.githubusercontent.com/8418700/174631473-a25f3eb1-3a97-468b-b574-6f50718db4dc.gif)
 
 ![](https://vsmarketplacebadge.apphb.com/version/hamedfathi.vscode-replay.svg)
