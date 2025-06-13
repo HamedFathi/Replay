@@ -125,20 +125,6 @@
             "⌫${1:count}$0"
         ]
     },
-    "VSCode Replay Boost": {
-        "prefix": "replay-boost",
-        "description": "add boost character",
-        "body": [
-            "↯$0"
-        ]
-    },
-    "VSCode Replay Double Boost": {
-        "prefix": "replay-double-boost",
-        "description": "add double boost characters",
-        "body": [
-            "↯↯$0"
-        ]
-    },
     "VSCode Replay Pause": {
         "prefix": "replay-pause",
         "description": "add a second pause",
@@ -161,168 +147,154 @@
         ]
     },
     "VSCode Replay Command": {
-        "prefix": "replay-command",
+        "prefix": "replay-cmd",
         "description": "add command with name",
         "body": [
             "⧉ ${1:name}$0"
         ]
     },
     "VSCode Replay Command Arg 1": {
-        "prefix": "replay-command-arg1",
+        "prefix": "replay-cmd-arg1",
         "description": "add command with name & one argument",
         "body": [
             "⧉ ${1:name}:${2:arg1}$0"
         ]
     },
     "VSCode Replay Command Arg 2": {
-        "prefix": "replay-command-arg2",
+        "prefix": "replay-cmd-arg2",
         "description": "add command with name & two arguments",
         "body": [
             "⧉ ${1:name}:${2:arg1}:${3:arg2}:$0"
         ]
     },
     "VSCode Replay Command Arg 3": {
-        "prefix": "replay-command-arg3",
+        "prefix": "replay-cmd-arg3",
         "description": "add command with name & three arguments",
         "body": [
             "⧉ ${1:name}:${2:arg1}:${3:arg2}:${4:arg3}$0"
         ]
     },
     "VSCode Replay Command Arg 4": {
-        "prefix": "replay-command-arg4",
+        "prefix": "replay-cmd-arg4",
         "description": "add command with name & four arguments",
         "body": [
             "⧉ ${1:name}:${2:arg1}:${3:arg2}:${4:arg3}:${5:arg4}$0"
         ]
     },
     "VSCode Replay Command Goto": {
-        "prefix": "replay-command-goto",
+        "prefix": "replay-cmd-goto",
         "description": "go to the specified line and column",
         "body": [
             "⧉ goto:${1:line}:${2:column}$0"
         ]
     },
     "VSCode Replay Command Delete Line": {
-        "prefix": "replay-command-delete-line",
+        "prefix": "replay-cmd-delete-line",
         "description": "delete whole content of a line & line itself",
         "body": [
             "⧉ delete:${1:line}$0"
         ]
     },
     "VSCode Replay Command Empty Line": {
-        "prefix": "replay-command-empty-line",
+        "prefix": "replay-cmd-empty-line",
         "description": "delete whole content of a line but keep the line empty",
         "body": [
             "⧉ empty:${1:line}$0"
         ]
     },
     "VSCode Replay Command Delete After": {
-        "prefix": "replay-command-delete-after",
+        "prefix": "replay-cmd-delete-after",
         "description": "delete characters after the specified line and column",
         "body": [
             "⧉ delete-after:${1:line}:${2:column}$0"
         ]
     },
     "VSCode Replay Command Delete Before": {
-        "prefix": "replay-command-delete-before",
+        "prefix": "replay-cmd-delete-before",
         "description": "delete characters before the specified line and column",
         "body": [
             "⧉ delete-before:${1:line}:${2:column}$0"
         ]
     },
     "VSCode Replay Command Delete Area": {
-        "prefix": "replay-command-delete-area",
+        "prefix": "replay-cmd-delete-area",
         "description": "delete characters of the specified positions",
         "body": [
             "⧉ delete-area:${1:line}:${2:column}:${3:line}:${4:column}$0"
         ]
     },
     "VSCode Replay Command Delete All": {
-        "prefix": "replay-command-delete-all",
+        "prefix": "replay-cmd-delete-all",
         "description": "delete whole content of page",
         "body": [
             "⧉ delete-all$0"
         ]
     },
     "VSCode Replay Command Execute": {
-        "prefix": "replay-command-execute",
+        "prefix": "replay-cmd-execute",
         "description": "execute the specified command of VS Code",
         "body": [
             "⧉ execute:${1:command}$0"
         ]
     },
-    "VSCode Replay Command Duplicate After": {
-        "prefix": "replay-command-duplicate-line-after",
-        "description": "duplicate the line after it",
-        "body": [
-            "⧉ duplicate-after:${1:line}$0"
-        ]
-    },
-    "VSCode Replay Command Duplicate Before": {
-        "prefix": "replay-command-duplicate-line-before",
-        "description": "duplicate the line before it",
-        "body": [
-            "⧉ duplicate-before:${1:line}$0"
-        ]
-    },
     "VSCode Replay Command Copy": {
-        "prefix": "replay-command-copy",
+        "prefix": "replay-cmd-copy",
         "description": "copy the specified position",
         "body": [
             "⧉ copy:${1:line}:${2:column}:${3:line}:${4:column}$0"
         ]
     },
     "VSCode Replay Command Cut": {
-        "prefix": "replay-command-cut",
+        "prefix": "replay-cmd-cut",
         "description": "cut the specified position",
         "body": [
             "⧉ cut:${1:line}:${2:column}:${3:line}:${4:column}$0"
         ]
     },
     "VSCode Replay Command Paste": {
-        "prefix": "replay-command-paste",
+        "prefix": "replay-cmd-paste",
         "description": "paste the specified position",
         "body": [
             "⧉ paste:${1:line}:${2:column}:${3:line}:${4:column}$0"
         ]
     },
     "VSCode Replay Command Memory": {
-        "prefix": "replay-command-memory",
+        "prefix": "replay-cmd-memory",
         "description": "save content of the specified position in a memory variable",
         "body": [
             "⧉ memory:${1:variable}:${2:line}:${3:column}:${4:line}:${5:column}$0"
         ]
     },
     "VSCode Replay Command Restore": {
-        "prefix": "replay-command-restore",
+        "prefix": "replay-cmd-restore",
         "description": "restore a memory variable data in the specified position",
         "body": [
             "⧉ restore:${1:variable}:${2:line}:${3:column}:${4:line}:${5:column}$0"
         ]
     },
     "VSCode Replay Command WaitN": {
-        "prefix": "replay-command-waitn",
+        "prefix": "replay-cmd-waitn",
         "description": "waiting for seconds with a comment if you set",
         "body": [
             "⧉ waitn:${1:seconds}:${2:comment}$0"
         ]
     },
     "VSCode Replay Command SelectN": {
-        "prefix": "replay-command-selectn",
+        "prefix": "replay-cmd-selectn",
         "description": "select the specified position for seconds",
         "body": [
             "⧉ selectn:${1:seconds}:${2:line}:${3:column}:${4:line}:${5:column}$0"
         ]
     },
     "VSCode Replay Command Wait": {
-        "prefix": "replay-command-wait",
+        "prefix": "replay-cmd-wait",
         "description": "showing a yes/no dialog with a comment if you set",
         "body": [
             "⧉ wait:${1:comment}$0"
         ]
     },
     "VSCode Replay Command Speed": {
-        "prefix": "replay-command-speed",
+        "prefix": "replay-cmd-speed",
         "description": "control the speed and delay of typing",
         "body": [
             "⧉ speed:${1:speed}:${2:delay}$0"
@@ -336,14 +308,13 @@
             "file: ${1:./folder1/sample1.js}",
             "line: 0",
             "col: 0",
-            "speed: 20",
-            "delay: 250",
-            "bspeed: 20",
-            "bdelay: 250",
+            "speed: 10",
+            "delay: 150",
+            "bspeed: 5",
+            "bdelay: 150",
             "clean: true",
             "next: ${2:./sample2.vscreplay}",
             "save: true",
-            "info: true",
             "---$0",
         ]
     },

@@ -7,7 +7,7 @@ import * as fg from "fast-glob";
 import * as path from "path";
 import { checkCommands, repeatSymbols } from "./replay-regex";
 import gmatter from "gray-matter";
-import { Script, ScriptConfig } from "./Config";
+import { Script, ScriptConfig } from "./config";
 
 let rootDir, replayFile, nextFile: string | undefined;
 let saveDoc: boolean;
@@ -19,11 +19,8 @@ let dl: number;
 let commands: string[] = [];
 let clipboard: string = "";
 let pause = false;
-let showInfo: boolean;
 let globalPosition: vscode.Position;
 let globalText: string = "";
-let hasBoost = false;
-let hasBoostWithPause = false;
 let hasSelect = false;
 let bSpeed: number;
 let bDelayNum: number;
@@ -117,22 +114,7 @@ async function replayIt() {
   } else {
     nextFile = undefined;
   }
-  let boostChar = "↯";
-  if (script.content.includes(boostChar + boostChar)) {
-    hasBoostWithPause = true;
-    script.content = script.content.replace(boostChar + boostChar, boostChar);
-  } else {
-    hasBoostWithPause = false;
-  }
 
-  let boostParts = script.content.split(boostChar);
-  let boostLength = boostParts.length - 1;
-  if (boostLength > 1) {
-    vscode.window.showErrorMessage(
-      `The count of the boost operation char '↯' is more than 1.`
-    );
-    return;
-  }
   let file = path.resolve(rootDir, script.options.file);
   let dir = path.dirname(file);
   let vscFile: vscode.Uri = vscode.Uri.file(file);
@@ -151,7 +133,6 @@ async function replayIt() {
   }
   await vscode.window.showTextDocument(vscFile);
 
-  showInfo = script.options.info != undefined ? script.options.info : true;
   let startLine = script.options.line != undefined ? script.options.line : 0;
   let startCol = script.options.col != undefined ? script.options.col : 0;
   saveDoc = script.options.save != undefined ? script.options.save : true;
@@ -185,10 +166,6 @@ async function replayIt() {
     bDelayNum = 400;
   }
 
-  if (boostLength == 1) {
-    hasBoost = true;
-  }
-
   await typeIt(script.content, new vscode.Position(startLine, startCol));
 }
 
@@ -200,9 +177,7 @@ function readScript(filePath: string): Script {
   let cnt = fs.readFileSync(filePath, "utf8");
   let gm = gmatter(cnt);
   let text = "❅" + repeatSymbols(gm.content) + "🔚";
-  text = removeBackSlashR(text);
-  let rgx = /⨷\s*\n/gm;
-  text = text.replace(rgx, "");
+  text = removeCarriageReturns(text);
   let data = checkCommands(text);
   commands = data.commands;
   return {
@@ -266,32 +241,7 @@ function validateScriptConfig(options: ScriptConfig): boolean {
       return false;
     }
   }
-  if ("info" in options) {
-    if (typeof options.info != "boolean") {
-      vscode.window.showErrorMessage(`'info' must set as a boolean.`);
-      return false;
-    }
-  }
   return true;
-}
-
-function getReplayConfig(rootDir: string | undefined): any {
-  if (rootDir) {
-    if (rootDir.length > 0) {
-      let dir = `${replaceAll(rootDir, "\\", "/")}/**/config.vscreplay.json`;
-      let files = fg.sync(dir, {
-        caseSensitiveMatch: false,
-        globstar: true,
-        dot: true,
-        onlyFiles: true,
-      });
-      if (files.length > 0) {
-        let cnt = fs.readFileSync(files[0], "utf8");
-        return JSON.parse(cnt);
-      }
-    }
-  }
-  return undefined;
 }
 
 function duplicateDetection(rootDir: string | undefined): void {
@@ -329,7 +279,7 @@ function duplicateDetection(rootDir: string | undefined): void {
 const findDuplicates = (arry: string[]) =>
   arry.filter((item, index) => arry.indexOf(item) !== index);
 
-function removeBackSlashR(text: string): string {
+function removeCarriageReturns(text: string): string {
   if (!text) {
     return "";
   }
@@ -361,99 +311,38 @@ async function typeIt(text: string, pos: vscode.Position) {
     delayNum = dl;
   }
   ++len;
-  if (char == "↯") {
-    hasBoost = false;
-    char = "";
-    _pos = new vscode.Position(pos.line, pos.character);
-    if (hasBoostWithPause) {
-      pause = true;
-      hasBoostWithPause = false;
-      hasBoost = false;
-      let interval = setInterval((_) => {
-        vscode.window
-          .showInformationMessage("Do you want to continue?", "Yes", "No")
-          .then(async (answer) => {
-            if (answer === "Yes") {
-              pause = false;
-              clearInterval(interval);
-              await typeIt(text.substring(1, text.length), _pos);
-            }
-            if (answer === "No") {
-              pause = true;
-              clearInterval(interval);
-              return;
-            }
-          });
-      }, 10000);
-      vscode.window
-        .showInformationMessage("Do you want to continue?", "Yes", "No")
-        .then(async (answer) => {
-          if (answer === "Yes") {
-            pause = false;
-            clearInterval(interval);
-            await typeIt(text.substring(1, text.length), _pos);
-          }
-          if (answer === "No") {
-            pause = true;
-            clearInterval(interval);
-            return;
-          }
-        });
-    }
-  }
   if (char == "❅") {
     char = "";
     _pos = new vscode.Position(pos.line, pos.character);
   }
   if (char == "⭯") {
     char = "";
-    if (!hasBoost) {
-      pause = true;
-      let result = getCount(text, "⭯");
-      if (result.count == 1) {
-        let interval = setInterval((_) => {
-          vscode.window
-            .showInformationMessage("Do you want to continue?", "Yes", "No")
-            .then(async (answer) => {
-              if (answer === "Yes") {
-                pause = false;
-                clearInterval(interval);
-                await typeIt(text.substring(1, text.length), _pos);
-              }
-              if (answer === "No") {
-                pause = true;
-                clearInterval(interval);
-                return;
-              }
-            });
-        }, 10000);
-        vscode.window
-          .showInformationMessage("Do you want to continue?", "Yes", "No")
-          .then(async (answer) => {
-            if (answer === "Yes") {
-              pause = false;
-              clearInterval(interval);
-              await typeIt(text.substring(1, text.length), _pos);
-            }
-            if (answer === "No") {
-              pause = true;
-              clearInterval(interval);
-              return;
-            }
-          });
-      } else {
-        if (showInfo) {
-          vscode.window.showInformationMessage(
-            `Auto typing has been paused for ${result.count} second(s).`
-          );
-        }
-        let timer = setTimeout(async () => {
-          pause = false;
-          clearTimeout(timer);
-          await typeIt(result.text, _pos);
-        }, result.count * 1000);
+    pause = true;
+    let result = getCount(text, "⭯");
+    if (result.count == 1) {
+      const userContinued = await showPersistentMessage();
+      if (userContinued) {
+        pause = false;
+        await typeIt(text.substring(1, text.length), _pos);
       }
+      return;
+    } else {
+      pause = true;
+      const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+
+      statusBarItem.text = `Auto paused for ${result.count} second(s).`;
+      statusBarItem.show();
+
+      let timer = setTimeout(async () => {
+        statusBarItem.hide();
+        statusBarItem.dispose();
+        pause = false;
+        clearTimeout(timer);
+        await typeIt(result.text, _pos);
+      }, result.count * 1000);
+      return;
     }
+
   }
   if (char == "↓") {
     _pos = new vscode.Position(pos.line + 1, pos.character);
@@ -494,14 +383,12 @@ async function typeIt(text: string, pos: vscode.Position) {
   if (char == "⧉") {
     char = "";
     let cmd = commands.pop();
-    let waitn = /waitn:([0-9]+):(.+)/g;
-    let wait = /wait:(.+)/g;
+    let waitn = /waitn:([0-9]+)(?::(.+))?/g;
+    let wait = /wait(?::(.+))?/g;
     let deleteAll = /delete-all/g;
     let speedRegex = /speed:([0-9]+):([0-9]+)/g;
     let gotoRegex = /goto:([0-9]+|ll):([0-9]+|eol)/g;
     let emptyRegex = /empty:([0-9]+|ll)/g;
-    let dupBeforeRegex = /duplicate-line-before:([0-9]+|ll)/g;
-    let dupAfterRegex = /duplicate-line-after:([0-9]+|ll)/g;
     let execRegex = /execute:(.+)/g;
     let deleteRegex = /delete:([0-9]+|ll)/g;
     let selectRegex = /selectn\:([0-9]+)\:([0-9]+|ll)\:([0-9]+|eol)\:([0-9]+|ll)\:([0-9]+|eol)/g;
@@ -525,8 +412,6 @@ async function typeIt(text: string, pos: vscode.Position) {
       let cutMatch = cutRegex.exec(cmd);
       let pasteMatch = pasteRegex.exec(cmd);
       let execMatch = execRegex.exec(cmd);
-      let dbeforeMatch = dupBeforeRegex.exec(cmd);
-      let dafterMatch = dupAfterRegex.exec(cmd);
       let deleteAllMatch = deleteAll.exec(cmd);
       let waitnMatch = waitn.exec(cmd);
       let waitMatch = wait.exec(cmd);
@@ -597,55 +482,46 @@ async function typeIt(text: string, pos: vscode.Position) {
         }
         delayNum = dl = d;
       }
-      if (waitMatch && !hasBoost) {
+
+      if (waitMatch && !waitMatch.input.trim().startsWith("waitn")) {
         pause = true;
-        let msg = waitMatch[1].trim() == "" ? "" : `${waitMatch[1]}, `;
-        let interval = setInterval((_) => {
-          vscode.window
-            .showInformationMessage(`${msg}Continue?`, "Yes", "No")
-            .then(async (answer) => {
-              if (answer === "Yes") {
-                pause = false;
-                clearInterval(interval);
-                await typeIt(text.substring(1, text.length), _pos);
-              }
-              if (answer === "No") {
-                pause = true;
-                clearInterval(interval);
-                return;
-              }
-            });
-        }, 10000);
-        vscode.window
-          .showInformationMessage(`${msg}Continue?`, "Yes", "No")
-          .then(async (answer) => {
-            if (answer === "Yes") {
-              pause = false;
-              clearInterval(interval);
-              await typeIt(text.substring(1, text.length), _pos);
-            }
-            if (answer === "No") {
-              pause = true;
-              clearInterval(interval);
-              return;
-            }
-          });
+        let msg = "";
+        if (waitMatch[1]) {
+          msg = waitMatch[1].trim() == "" ? "" : `${waitMatch[1]}, `;
+        }
+        const userContinued = msg.trim().length > 0
+          ? await showPersistentMessage(msg.trim())
+          : await showPersistentMessage();
+
+        if (userContinued) {
+          pause = false;
+          await typeIt(text.substring(1, text.length), _pos);
+        }
+        return;
       }
 
-      if (waitnMatch && !hasBoost) {
+      if (waitnMatch) {
         pause = true;
         let count = Number.parseInt(waitnMatch[1].replace(/\s/g, ""));
-        let msg = waitnMatch[2].trim() == "" ? "" : `${waitnMatch[2]}, `;
-        if (showInfo || msg != "") {
-          vscode.window.showInformationMessage(
-            `${msg}Paused for ${count} second(s).`
-          );
+        let msg = "";
+        if (waitnMatch[2]) {
+          msg = waitnMatch[2].trim() == "" ? "" : `${waitnMatch[2]}, pause for ${count} second(s).`;
         }
+        else {
+          msg = `Auto pause for ${count} second(s).`;
+        }
+        const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        statusBarItem.text = `${msg}`;
+        statusBarItem.show();
+
         let timer = setTimeout(async () => {
+          statusBarItem.hide();
+          statusBarItem.dispose();
           pause = false;
           clearTimeout(timer);
           await typeIt(text.substring(1, text.length), _pos);
         }, count * 1000);
+        return;
       }
 
       if (selectMatch) {
@@ -674,6 +550,7 @@ async function typeIt(text: string, pos: vscode.Position) {
           clearTimeout(timer);
           await typeIt(text.substring(1, text.length), _pos);
         }, delay * 1000);
+        return;
       }
 
       if (deleteAllMatch) {
@@ -788,51 +665,6 @@ async function typeIt(text: string, pos: vscode.Position) {
           editBuilder.delete(newRange);
         });
       }
-      if (dbeforeMatch) {
-        let copyline1 = dbeforeMatch[1].replace(/\s/g, "") == "ll"
-          ? editor.document.lineCount - 1
-          : Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
-        let copycol1 = 0;
-        let copyline2 = dbeforeMatch[1].replace(/\s/g, "") == "ll"
-          ? editor.document.lineCount - 1
-          : Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
-        let copycol2 = editor.document.lineAt(copyline2).range.end.character;
-        let copypos1 = new vscode.Position(copyline1, copycol1);
-        let copypos2 = new vscode.Position(copyline2, copycol2);
-        let data =
-          editor.document.getText(new vscode.Range(copypos1, copypos2)) + "\n";
-        let line1 = dbeforeMatch[1].replace(/\s/g, "") == "ll"
-          ? editor.document.lineCount - 1
-          : Number.parseInt(dbeforeMatch[1].replace(/\s/g, ""));
-        let col1 = 0;
-        let pos1 = new vscode.Position(line1, col1);
-        await editor.edit(function (editBuilder) {
-          editBuilder.insert(pos1, data);
-        });
-      }
-
-      if (dafterMatch) {
-        let copyline1 = dafterMatch[1].replace(/\s/g, "") == "ll"
-          ? editor.document.lineCount - 1
-          : Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
-        let copycol1 = 0;
-        let copyline2 = dafterMatch[1].replace(/\s/g, "") == "ll"
-          ? editor.document.lineCount - 1
-          : Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
-        let copycol2 = editor.document.lineAt(copyline2).range.end.character;
-        let copypos1 = new vscode.Position(copyline1, copycol1);
-        let copypos2 = new vscode.Position(copyline2, copycol2);
-        let data =
-          "\n" + editor.document.getText(new vscode.Range(copypos1, copypos2));
-        let line1 = dafterMatch[1].replace(/\s/g, "") == "ll"
-          ? editor.document.lineCount - 1
-          : Number.parseInt(dafterMatch[1].replace(/\s/g, ""));
-        let col1 = editor.document.lineAt(line1).range.end.character;
-        let pos1 = new vscode.Position(line1, col1);
-        await editor.edit(function (editBuilder) {
-          editBuilder.insert(pos1, data);
-        });
-      }
 
       if (copyMatch) {
         let line1 = copyMatch[1].replace(/\s/g, "") == "ll"
@@ -909,12 +741,14 @@ async function typeIt(text: string, pos: vscode.Position) {
       if (char != "⌫") {
         editBuilder.insert(_pos, char);
       } else {
-        speed = bSpeed;
-        delayNum = bDelayNum;
-        _pos = new vscode.Position(pos.line, pos.character - 1);
-        let selection = new vscode.Selection(_pos, pos);
-        editBuilder.delete(selection);
-        char = "";
+        try {
+          speed = bSpeed;
+          delayNum = bDelayNum;
+          _pos = new vscode.Position(pos.line, pos.character - 1);
+          let selection = new vscode.Selection(_pos, pos);
+          editBuilder.delete(selection);
+          char = "";
+        } catch (error) { }
       }
       let newSelection = new vscode.Selection(_pos, _pos);
       if (char == "\n" || char == "⮒") {
@@ -928,11 +762,8 @@ async function typeIt(text: string, pos: vscode.Position) {
     })
     .then(async function () {
       let delay = speed + (delayNum == 0 ? 0 : 80 * Math.random());
-      if (Math.random() < 0.1 && !hasBoost && delayNum != 0) {
+      if (Math.random() < 0.1 && delayNum != 0) {
         delay += delayNum;
-      }
-      if (hasBoost) {
-        delay = 0;
       }
       let _p = new vscode.Position(_pos.line, char.length + _pos.character);
       globalPosition = _p;
@@ -952,6 +783,18 @@ async function typeIt(text: string, pos: vscode.Position) {
               await vscode.window.showTextDocument(vscNextFile);
               replayIt();
             }
+            else {
+              const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+              statusBarItem.text = `Congratulation! Presentation is over.`;
+              statusBarItem.show();
+
+              setTimeout(() => {
+                statusBarItem.hide();
+                statusBarItem.dispose();
+                return;
+              }, 5000);
+            }
+
             return;
           }
           await typeIt(ch, _p);
@@ -959,6 +802,24 @@ async function typeIt(text: string, pos: vscode.Position) {
         }, delay);
       });
     });
+}
+
+async function showPersistentMessage(message?: string): Promise<boolean> {
+  let selection: string | undefined;
+  const defaultMessage = 'You must click Continue to proceed';
+  while (!selection) {
+    selection = await vscode.window.showQuickPick(['Continue'], {
+      placeHolder: message || defaultMessage,
+      canPickMany: false,
+      ignoreFocusOut: true
+    });
+
+    if (!selection) {
+      continue;
+    }
+  }
+
+  return selection === 'Continue';
 }
 
 function getCount(text: string, ch: string): { text: string; count: number } {

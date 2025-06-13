@@ -1,33 +1,41 @@
 ---
-file: ./folder1/folder3/sample.js
+file: ./folder1/folder2/jest-intro.js
 line: 0
 col: 0
+speed: 10
+delay: 150
+bspeed: 5
+bdelay: 150
 clean: true
 save: true
 ---
+⧉speed:10:100
+//Hi, My name is Hamed Fathi!⭯2⌫29
+⧉delete-all
+⧉speed:5:75
 // What is Jest?
 // Jest is a delightful JavaScript Testing Framework with a focus on simplicity.
 // How should we write a test with Jest?
-⭯5
-⧉ delete-all
+⭯
+⧉delete-all
 // (1) Install Jest using your favorite package manager:
 // npm install --save-dev jest
 // or
 // yarn add --dev jest
-⧉ waitn:3:Creating functionality	
+⧉waitn:3:Creating functionality	
 
 // (2) Create a 'sum.js' file:
 function sum(a, b) {⮒⮒}⇥
 ↑↑  return a + b;↓
 module.exports = sum;
-⧉ waitn:3:Creating test file	
+⧉waitn:3:Creating test file	
 
 // (3) Create a file named 'sum.test.js'. This will contain our actual test:
 const sum = require('./sum');
 test('adds 1 + 2 to equal 3', () => {⮒⮒});⇥
 ↑↑  expect(sum(1, 2)).toBe(3);↓
 ⧉execute:editor.action.formatDocument
-⧉ waitn:3:Configuration
+⧉waitn:3:Configuration
 
 // (4) Add the following section to your 'package.json':
 /*⮒*/↑
@@ -36,7 +44,8 @@ test('adds 1 + 2 to equal 3', () => {⮒⮒});⇥
     "test": "jest"
   }
 }↓↓
-⧉ waitn:3:Running the test
+
+⧉waitn:3:Running the test
 // (5) Finally, run 'yarn test' or 'npm test' and Jest will print this message:
 // PASS  ./sum.test.js
 // ✓ adds 1 + 2 to equal 3 (5ms)
